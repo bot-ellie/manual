@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 소프트웨어 개발 환경 세팅 가이드</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .k-burgundy {
+      color: #9E1B32;
+    }
+    .bg-k-burgundy {
+      background-color: #9E1B32;
+    }
+    .border-k-burgundy {
+      border-color: #9E1B32;
+    }
+    .hover-bg-k-burgundy:hover {
+      background-color: #831528;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">개발 환경 구축 & 가상환경 표준 가이드</h1>
+          <p class="text-xs text-slate-500">Windows 환경 필수 도구 설치 및 프로젝트 환경 세팅</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-solid fa-circle-check text-red-600 mr-1"></i>강의/실습 배포용
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 모드 스위처 (권장 vs 정책유지) -->
+    <div class="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <div class="p-2.5 bg-amber-50 rounded-lg text-amber-600 mt-0.5">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-slate-900">PowerShell 실행 권한 모드 설정</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+            Windows 기본 정책으로 인한 <code class="bg-slate-100 text-red-600 px-1 py-0.5 rounded">.ps1</code> 차단 에러를 예방하는 방식을 선택하세요.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl w-full md:w-auto justify-center">
+        <button id="btnModeStandard" onclick="setExecutionMode('standard')" class="px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> 권장 모드 (권한 해제)
+        </button>
+        <button id="btnModeCmd" onclick="setExecutionMode('cmd')" class="px-4 py-2 text-xs font-medium text-slate-600 rounded-lg transition-all hover:text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-terminal text-slate-500"></i> 대안 모드 (.cmd 명시)
+        </button>
+      </div>
+    </div>
+
+    <!-- 권한 해제 안내 배너 (권장 모드일 때 표시) -->
+    <div id="policyBanner" class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <span class="text-amber-600 text-lg mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></span>
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wide bg-amber-200 text-amber-900 px-2 py-0.5 rounded mr-2">사전 1회 필수</span>
+            <span class="text-sm font-bold text-amber-950">PowerShell에서 권한 해제 명령어 실행</span>
+            <p class="text-xs text-amber-800 mt-1">
+              아래 명령어를 PowerShell에 입력하면 <code class="bg-amber-100 px-1 rounded font-semibold">.cmd</code> 없이 일반 <code class="bg-amber-100 px-1 rounded font-semibold">npm</code>, <code class="bg-amber-100 px-1 rounded font-semibold">codex</code> 명령을 쓸 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <button onclick="copyToClipboard('Set-ExecutionPolicy RemoteSigned -Scope CurrentUser')" class="w-full sm:w-auto px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm shrink-0">
+          <i class="fa-regular fa-copy"></i> 명령어 복사
+        </button>
+      </div>
+      <div class="mt-2.5 bg-slate-900 text-amber-300 font-mono text-xs px-3 py-2 rounded-lg overflow-x-auto flex items-center justify-between">
+        <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        winget 점검
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        자동 설치 (4종)
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        버전 검증 & Codex
+      </button>
+      <button onclick="switchTab(4)" id="tabNav4" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-100 text-red-800 font-bold flex items-center justify-center text-xs">4</span>
+        실습 가상환경 세팅 (.venv)
+      </button>
+      <button onclick="switchTab(5)" id="tabNav5" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">5</span>
+        수동 설치 (문제 해결)
+      </button>
+    </div>
+
+    <!-- TAB 1: winget 점검 -->
+    <div id="tabContent1" class="tab-content block">
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-terminal text-red-700"></i> Step 1. 터미널 열고 winget 정상 작동 점검
+        </h3>
+        <p class="text-sm text-slate-600 mb-4">
+          Windows 검색창에서 <strong>PowerShell</strong>을 실행한 뒤, 아래 명령어를 입력하여 winget이 설치되어 있는지 확인합니다.
+        </p>
+
+        <div class="bg-slate-900 rounded-xl p-4 relative mb-6 shadow-inner">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-mono text-slate-400">PowerShell</span>
+            <button onclick="copyToClipboard('winget --version')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded transition flex items-center gap-1 border border-slate-700">
+              <i class="fa-regular fa-copy"></i> 복사
+            </button>
+          </div>
+          <code class="text-sm font-mono text-emerald-400 font-semibold block">winget --version</code>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-emerald-200 bg-emerald-50/50 rounded-xl p-4">
+            <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm mb-1">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i> 버전 번호가 정상 출력된 경우
+            </div>
+            <p class="text-xs text-slate-600 mb-3">예: <code class="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-200">v1.8.x...</code></p>
+            <button onclick="switchTab(2)" class="w-full py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              Step 2 자동 설치로 바로 이동 <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+          <div class="border border-rose-200 bg-rose-50/50 rounded-xl p-4">
+            <div class="flex items-center gap-2 text-rose-800 font-bold text-sm mb-1">
+              <i class="fa-solid fa-circle-xmark text-rose-600"></i> 빨간색 에러 / 인식 불가 메시지인 경우
+            </div>
+            <p class="text-xs text-slate-600 mb-3">'winget' 용어가 cmdlet, 함수... 이름으로 인식되지 않습니다.</p>
+            <button onclick="switchTab(5)" class="w-full py-2 bg-rose-700 hover:bg-rose-800 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+              Step 5 문제 해결 및 수동 설치로 이동 <i class="fa-solid fa-wrench"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 자동 설치 -->
+    <div id="tabContent2" class="tab-content hidden">
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-download text-red-700"></i> Step 2. 필수 개발 도구 4종 일괄 설치
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">아래 일괄 명령어를 복사해 터미널에 붙여넣으면 4개 프로그램이 차례대로 자동 설치됩니다.</p>
+          </div>
+          <button onclick="copyToClipboard('winget install --id Git.Git -e; winget install --id Microsoft.VisualStudioCode -e; winget install --id OpenJS.NodeJS.LTS -e; winget install --id Python.Python.3.15 -e')" class="px-4 py-2.5 bg-red-800 hover:bg-red-900 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm shrink-0">
+            <i class="fa-regular fa-copy"></i> 4종 일괄 설치 명령어 복사
+          </button>
+        </div>
+
+        <div class="bg-slate-900 rounded-xl p-4 shadow-inner text-xs font-mono space-y-1.5 text-slate-300 overflow-x-auto">
+          <div><span class="text-slate-500"># Git 설치</span></div>
+          <div class="text-sky-300">winget install --id Git.Git -e</div>
+          <div><span class="text-slate-500"># VS Code 설치</span></div>
+          <div class="text-sky-300">winget install --id Microsoft.VisualStudioCode -e</div>
+          <div><span class="text-slate-500"># Node.js LTS (npm 포함)</span></div>
+          <div class="text-sky-300">winget install --id OpenJS.NodeJS.LTS -e</div>
+          <div><span class="text-slate-500"># Python 3.15</span></div>
+          <div class="text-sky-300">winget install --id Python.Python.3.15 -e</div>
+        </div>
+      </div>
+
+      <!-- 개별 설치 카드 -->
+      <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+        <i class="fa-solid fa-cube text-slate-400"></i> 개별 설치가 필요할 경우
+      </h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Git -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-git-alt text-orange-600 text-base"></i> Git (버전 관리)
+              </span>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded">Git.Git</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">로컬 코드의 변경 내역을 저장하고 GitHub와 연결하는 도구</p>
+          </div>
+          <div class="bg-slate-900 p-2.5 rounded-lg flex items-center justify-between text-xs font-mono">
+            <code class="text-emerald-400 truncate pr-2">winget install --id Git.Git -e</code>
+            <button onclick="copyToClipboard('winget install --id Git.Git -e')" class="text-slate-400 hover:text-white shrink-0"><i class="fa-regular fa-copy"></i></button>
+          </div>
+        </div>
+        <!-- VS Code -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-code text-sky-600 text-base"></i> VS Code (편집기)
+              </span>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded">Microsoft.VisualStudioCode</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">코드 작성 및 터미널, Git 연동을 지원하는 통합 에디터</p>
+          </div>
+          <div class="bg-slate-900 p-2.5 rounded-lg flex items-center justify-between text-xs font-mono">
+            <code class="text-emerald-400 truncate pr-2">winget install --id Microsoft.VisualStudioCode -e</code>
+            <button onclick="copyToClipboard('winget install --id Microsoft.VisualStudioCode -e')" class="text-slate-400 hover:text-white shrink-0"><i class="fa-regular fa-copy"></i></button>
+          </div>
+        </div>
+        <!-- Node.js -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-node-js text-emerald-600 text-base"></i> Node.js LTS (npm 포함)
+              </span>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded">OpenJS.NodeJS.LTS</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">JavaScript 실행 환경 및 npm 패키지 매니저 동시 탑재</p>
+          </div>
+          <div class="bg-slate-900 p-2.5 rounded-lg flex items-center justify-between text-xs font-mono">
+            <code class="text-emerald-400 truncate pr-2">winget install --id OpenJS.NodeJS.LTS -e</code>
+            <button onclick="copyToClipboard('winget install --id OpenJS.NodeJS.LTS -e')" class="text-slate-400 hover:text-white shrink-0"><i class="fa-regular fa-copy"></i></button>
+          </div>
+        </div>
+        <!-- Python 3.15 -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-python text-amber-500 text-base"></i> Python 3.15
+              </span>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded">Python.Python.3.15</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">데이터 분석 및 웹 앱 개발을 위한 최신 파이썬 런타임</p>
+          </div>
+          <div class="bg-slate-900 p-2.5 rounded-lg flex items-center justify-between text-xs font-mono">
+            <code class="text-emerald-400 truncate pr-2">winget install --id Python.Python.3.15 -e</code>
+            <button onclick="copyToClipboard('winget install --id Python.Python.3.15 -e')" class="text-slate-400 hover:text-white shrink-0"><i class="fa-regular fa-copy"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 버전 검증 & Codex -->
+    <div id="tabContent3" class="tab-content hidden">
+      <!-- 5종 도구 버전 확인 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-red-700"></i> Step 3-1. 설치된 5종 도구 버전 확인
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">설치 후 <strong>PowerShell 창을 닫고 새로 연 다음</strong> 실행해야 환경변수(PATH)가 정상 적용됩니다.</p>
+          </div>
+          <button id="btnCopyAllVerify" onclick="copyAllVerifyCommands()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm shrink-0">
+            <i class="fa-regular fa-copy"></i> 5종 버전 일괄 확인 복사
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- git -->
+          <div class="border border-slate-200 rounded-lg p-3 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Git 버전</span>
+              <code class="text-xs text-slate-600 font-mono">git --version</code>
+            </div>
+            <button onclick="copyToClipboard('git --version')" class="p-1.5 text-slate-400 hover:text-slate-700"><i class="fa-regular fa-copy"></i></button>
+          </div>
+          <!-- code -->
+          <div class="border border-slate-200 rounded-lg p-3 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">VS Code 버전</span>
+              <code class="text-xs text-slate-600 font-mono">code --version</code>
+            </div>
+            <button onclick="copyToClipboard('code --version')" class="p-1.5 text-slate-400 hover:text-slate-700"><i class="fa-regular fa-copy"></i></button>
+          </div>
+          <!-- node -->
+          <div class="border border-slate-200 rounded-lg p-3 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Node.js 버전</span>
+              <code class="text-xs text-slate-600 font-mono">node --version</code>
+            </div>
+            <button onclick="copyToClipboard('node --version')" class="p-1.5 text-slate-400 hover:text-slate-700"><i class="fa-regular fa-copy"></i></button>
+          </div>
+          <!-- npm -->
+          <div class="border border-slate-200 rounded-lg p-3 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">npm 패키지 매니저</span>
+              <code id="npmVerifyCmd" class="text-xs text-red-700 font-mono font-bold">npm --version</code>
+            </div>
+            <button onclick="copyDynamicNpmVerify()" class="p-1.5 text-slate-400 hover:text-slate-700"><i class="fa-regular fa-copy"></i></button>
+          </div>
+          <!-- python 3.15 -->
+          <div class="border border-slate-200 rounded-lg p-3 bg-slate-50 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Python 3.15 버전</span>
+              <code class="text-xs text-slate-600 font-mono">py -3.15 --version</code>
+            </div>
+            <button onclick="copyToClipboard('py -3.15 --version')" class="p-1.5 text-slate-400 hover:text-slate-700"><i class="fa-regular fa-copy"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Codex CLI 설치 및 검증 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-robot text-purple-600"></i> Step 3-2. OpenAI Codex CLI 전역 설치 및 버전 확인
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">npm을 활용하여 AI 코딩 보조 도구인 Codex CLI 패키지를 컴퓨터 전역(Global)에 설치합니다.</p>
+
+        <div class="space-y-4">
+          <!-- 설치 -->
+          <div class="border border-purple-200 bg-purple-50/40 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-purple-900">1. Codex 전역 설치 실행</span>
+              <button onclick="copyDynamicCodexInstall()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1 rounded transition flex items-center gap-1 shadow-sm">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            <div class="bg-slate-900 rounded-lg p-3 text-xs font-mono text-emerald-400">
+              <code id="codexInstallCmd">npm install -g @openai/codex</code>
+            </div>
+          </div>
+          <!-- 확인 -->
+          <div class="border border-slate-200 bg-slate-50 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-800">2. Codex 설치 확인</span>
+              <button onclick="copyDynamicCodexVerify()" class="text-xs bg-slate-800 hover:bg-slate-700 text-white px-2.5 py-1 rounded transition flex items-center gap-1">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            <div class="bg-slate-900 rounded-lg p-3 text-xs font-mono text-emerald-400">
+              <code id="codexVerifyCmd">codex --version</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 가상환경 세팅 (.venv) -->
+    <div id="tabContent4" class="tab-content hidden">
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="p-2.5 bg-red-50 text-red-700 rounded-xl">
+            <i class="fa-solid fa-folder-tree text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Step 4. 실습 프로젝트별 독립 가상환경(.venv) 구축</h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+              <strong>02_material</strong>, <strong>04_quality</strong>, <strong>05_automation</strong> 3개 폴더는 서로 다른 프로젝트입니다. 각 폴더마다 가상환경을 각각 구축하고 패키지(<code class="font-semibold text-slate-800">pandas</code>, <code class="font-semibold text-slate-800">streamlit</code>)를 설치해야 사전 준비가 완전히 종료됩니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- activate 안쓰는 이유 & Get-ChildItem 안내 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600 space-y-1.5">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+              <i class="fa-solid fa-circle-info text-blue-600"></i> 왜 activate 대신 직접 경로를 쓸까요?
+            </div>
+            <p>PowerShell의 보안 차단 오류를 원천 차단하고, 여러 터미널을 열었을 때 어떤 파이썬인지 헷갈리지 않도록 <strong>가상환경 내부의 <code class="bg-white px-1 py-0.5 rounded border border-slate-300 font-semibold">.\.venv\Scripts\python.exe</code>를 직접 지정</strong>하여 안전하게 실행합니다.</p>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600 space-y-1.5">
+            <div class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+              <i class="fa-solid fa-magnifying-glass text-slate-700"></i> 명령어 의미: pwd & Get-ChildItem
+            </div>
+            <p>• <code class="font-mono bg-white px-1 py-0.5 rounded border font-semibold">pwd</code>: 내가 지금 올바른 실습 폴더 위치에 들어와 있는지 확인</p>
+            <p>• <code class="font-mono bg-white px-1 py-0.5 rounded border font-semibold">Get-ChildItem</code>: 폴더 내 파일 목록을 확인 (Windows의 <code class="font-mono">dir</code>, Mac의 <code class="font-mono">ls</code>와 동일)</p>
+          </div>
+        </div>
+
+        <!-- 3개 폴더 하위 탭 -->
+        <div class="flex border-b border-slate-200 mb-4 bg-slate-100 rounded-lg p-1 gap-1">
+          <button onclick="switchFolderSubTab('02')" id="subTab02" class="px-4 py-2 text-xs font-bold rounded-md bg-white text-red-800 shadow-sm transition">
+            1. starter/02_material
+          </button>
+          <button onclick="switchFolderSubTab('04')" id="subTab04" class="px-4 py-2 text-xs font-medium text-slate-600 rounded-md hover:text-slate-900 transition">
+            2. starter/04_quality
+          </button>
+          <button onclick="switchFolderSubTab('05')" id="subTab05" class="px-4 py-2 text-xs font-medium text-slate-600 rounded-md hover:text-slate-900 transition">
+            3. starter/05_automation
+          </button>
+        </div>
+
+        <!-- 폴더별 실행 카드 컨테이너 -->
+        <div id="folderCardArea" class="border border-slate-200 rounded-xl p-5 bg-slate-50/50">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <span id="targetFolderBadge" class="text-xs font-bold uppercase tracking-wide bg-red-100 text-red-900 px-2.5 py-1 rounded-md">starter/02_material</span>
+              <h4 id="targetFolderTitle" class="text-sm font-bold text-slate-900 mt-1.5">02_material 폴더 가상환경 및 라이브러리 세팅</h4>
+            </div>
+            <button id="btnCopyVenvAll" onclick="copyCurrentFolderVenvAll()" class="px-3.5 py-2 bg-red-800 hover:bg-red-900 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-regular fa-copy"></i> 해당 폴더 전체 명령어 일괄 복사
+            </button>
+          </div>
+
+          <div class="space-y-3 font-mono text-xs">
+            <!-- 1. 진입 확인 -->
+            <div class="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 block mb-0.5 font-sans font-medium text-[11px]">1. 경로 확인 및 파일 목록 점검</span>
+                <span class="text-slate-800 font-semibold">pwd ; Get-ChildItem</span>
+              </div>
+              <button onclick="copyToClipboard('pwd ; Get-ChildItem')" class="text-slate-400 hover:text-slate-800 p-1"><i class="fa-regular fa-copy"></i></button>
+            </div>
+            <!-- 2. venv 생성 -->
+            <div class="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 block mb-0.5 font-sans font-medium text-[11px]">2. 파이썬 3.15 가상환경(.venv) 생성</span>
+                <span class="text-slate-800 font-semibold">py -3.15 -m venv .venv</span>
+              </div>
+              <button onclick="copyToClipboard('py -3.15 -m venv .venv')" class="text-slate-400 hover:text-slate-800 p-1"><i class="fa-regular fa-copy"></i></button>
+            </div>
+            <!-- 3. 패키지 설치 -->
+            <div class="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 block mb-0.5 font-sans font-medium text-[11px]">3. 가상환경 내부로 requirements.txt 설치 (직접 경로)</span>
+                <span class="text-slate-800 font-semibold">.\.venv\Scripts\python.exe -m pip install -r requirements.txt</span>
+              </div>
+              <button onclick="copyToClipboard('.\.venv\Scripts\python.exe -m pip install -r requirements.txt')" class="text-slate-400 hover:text-slate-800 p-1"><i class="fa-regular fa-copy"></i></button>
+            </div>
+            <!-- 4. 버전 검증 -->
+            <div class="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+              <div>
+                <span class="text-slate-400 block mb-0.5 font-sans font-medium text-[11px]">4. pandas 및 streamlit 설치 검증</span>
+                <span class="text-emerald-700 font-semibold">.\.venv\Scripts\python.exe -c "import pandas, streamlit; print(pandas.__version__, streamlit.__version__)"</span>
+              </div>
+              <button onclick="copyToClipboard('.\.venv\Scripts\python.exe -c &quot;import pandas, streamlit; print(pandas.__version__, streamlit.__version__)&quot;')" class="text-slate-400 hover:text-slate-800 p-1"><i class="fa-regular fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 수동 설치 및 복구 -->
+    <div id="tabContent5" class="tab-content hidden">
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-wrench text-red-700"></i> Step 5. winget 복구 및 공식 사이트 직접 설치
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-6">winget이 실행되지 않거나 사내 보안 정책상 터미널 설치가 차단된 경우 아래 방법을 통해 설치를 완료하세요.</p>
+
+        <!-- 방법 A: winget 복구 -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 mb-6">
+          <h4 class="font-bold text-slate-900 text-sm mb-2 flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs">A</span>
+            Microsoft Store에서 winget(앱 설치 관리자) 복구하기
+          </h4>
+          <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside pl-1">
+            <li>Windows 시작 메뉴에서 <strong>Microsoft Store</strong>를 실행합니다.</li>
+            <li>상단 검색창에 <strong>'앱 설치 관리자'</strong> (영문: <code class="font-mono">App Installer</code>)를 검색합니다.</li>
+            <li><strong>[업데이트]</strong> 또는 <strong>[설치]</strong> 버튼을 누른 뒤 완료되면 터미널을 다시 엽니다.</li>
+            <li>스토어 접속이 불가한 경우, <a href="https://github.com/microsoft/winget-cli/releases" target="_blank" class="text-red-700 font-semibold underline">공식 winget GitHub Releases</a>에서 최신 <code class="font-mono">.msixbundle</code> 파일을 직접 내려받아 실행합니다.</li>
+          </ol>
+        </div>
+
+        <!-- 방법 B: 공식 사이트 다운로드 링크 -->
+        <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+          <span class="w-5 h-5 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs">B</span>
+          공식 홈페이지 직접 다운로드 (수동 설치)
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <a href="https://git-scm.com/download/win" target="_blank" class="p-4 border border-slate-200 rounded-xl hover:border-red-300 hover:shadow-md transition bg-white block">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-git-alt text-orange-600"></i> Git for Windows
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400"></i>
+            </div>
+            <p class="text-xs text-slate-500">64-bit Git for Windows Setup 다운로드</p>
+          </a>
+
+          <a href="https://code.visualstudio.com/Download" target="_blank" class="p-4 border border-slate-200 rounded-xl hover:border-red-300 hover:shadow-md transition bg-white block">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-code text-sky-600"></i> VS Code
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400"></i>
+            </div>
+            <p class="text-xs text-slate-500">Windows User Installer 64-bit 다운로드</p>
+          </a>
+
+          <a href="https://nodejs.org/" target="_blank" class="p-4 border border-slate-200 rounded-xl hover:border-red-300 hover:shadow-md transition bg-white block">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-node-js text-emerald-600"></i> Node.js (LTS 버전)
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400"></i>
+            </div>
+            <p class="text-xs text-slate-500">안정적인 LTS 버전 Windows Installer(.msi) 선택</p>
+          </a>
+
+          <a href="https://www.python.org/downloads/windows/" target="_blank" class="p-4 border border-slate-200 rounded-xl hover:border-red-300 hover:shadow-md transition bg-white block">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-brands fa-python text-amber-500"></i> Python 3.15
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400"></i>
+            </div>
+            <p class="text-xs text-slate-500 font-semibold text-red-600">⚠️ 설치 첫 화면에서 'Add python.exe to PATH' 반드시 체크</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 토스트 알림창 -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 translate-y-20 opacity-0 transition-all duration-300 z-50 border border-slate-700">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toastMsg">클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) 임직원 소프트웨어 개발 실습 가이드 • 수강 전 사전 준비 안내서
+    </div>
+  </footer>
+
+  <script>
+    let currentMode = 'standard'; // 'standard' or 'cmd'
+    let currentFolder = '02';
+
+    function setExecutionMode(mode) {
+      currentMode = mode;
+      const btnStandard = document.getElementById('btnModeStandard');
+      const btnCmd = document.getElementById('btnModeCmd');
+      const policyBanner = document.getElementById('policyBanner');
+
+      if (mode === 'standard') {
+        btnStandard.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 flex items-center gap-1.5";
+        btnCmd.className = "px-4 py-2 text-xs font-medium text-slate-600 rounded-lg transition-all hover:text-slate-900 flex items-center gap-1.5";
+        policyBanner.classList.remove('hidden');
+
+        document.getElementById('npmVerifyCmd').textContent = 'npm --version';
+        document.getElementById('codexInstallCmd').textContent = 'npm install -g @openai/codex';
+        document.getElementById('codexVerifyCmd').textContent = 'codex --version';
+      } else {
+        btnCmd.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all shadow-sm bg-white text-slate-900 flex items-center gap-1.5";
+        btnStandard.className = "px-4 py-2 text-xs font-medium text-slate-600 rounded-lg transition-all hover:text-slate-900 flex items-center gap-1.5";
+        policyBanner.classList.add('hidden');
+
+        document.getElementById('npmVerifyCmd').textContent = 'npm.cmd --version';
+        document.getElementById('codexInstallCmd').textContent = 'npm.cmd install -g @openai/codex';
+        document.getElementById('codexVerifyCmd').textContent = 'codex.cmd --version';
+      }
+    }
+
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 5; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+        }
+      }
+    }
+
+    function switchFolderSubTab(folder) {
+      currentFolder = folder;
+      const folders = ['02', '04', '05'];
+      folders.forEach(f => {
+        const btn = document.getElementById('subTab' + f);
+        if (f === folder) {
+          btn.className = "px-4 py-2 text-xs font-bold rounded-md bg-white text-red-800 shadow-sm transition";
+        } else {
+          btn.className = "px-4 py-2 text-xs font-medium text-slate-600 rounded-md hover:text-slate-900 transition";
+        }
+      });
+
+      const titles = {
+        '02': { badge: 'starter/02_material', title: '02_material 폴더 가상환경 및 라이브러리 세팅' },
+        '04': { badge: 'starter/04_quality', title: '04_quality 폴더 가상환경 및 라이브러리 세팅' },
+        '05': { badge: 'starter/05_automation', title: '05_automation 폴더 가상환경 및 라이브러리 세팅' }
+      };
+
+      document.getElementById('targetFolderBadge').textContent = titles[folder].badge;
+      document.getElementById('targetFolderTitle').textContent = titles[folder].title;
+    }
+
+    function copyCurrentFolderVenvAll() {
+      const script = `pwd ; Get-ChildItem ; py -3.15 -m venv .venv ; .\.venv\Scripts\python.exe -m pip install -r requirements.txt ; .\.venv\Scripts\python.exe -c "import pandas, streamlit; print(pandas.__version__, streamlit.__version__)"`;
+      copyToClipboard(script);
+    }
+
+    function copyDynamicNpmVerify() {
+      const cmd = currentMode === 'standard' ? 'npm --version' : 'npm.cmd --version';
+      copyToClipboard(cmd);
+    }
+
+    function copyDynamicCodexInstall() {
+      const cmd = currentMode === 'standard' ? 'npm install -g @openai/codex' : 'npm.cmd install -g @openai/codex';
+      copyToClipboard(cmd);
+    }
+
+    function copyDynamicCodexVerify() {
+      const cmd = currentMode === 'standard' ? 'codex --version' : 'codex.cmd --version';
+      copyToClipboard(cmd);
+    }
+
+    function copyAllVerifyCommands() {
+      const npmCmd = currentMode === 'standard' ? 'npm --version' : 'npm.cmd --version';
+      const allCmds = `git --version ; code --version ; node --version ; ${npmCmd} ; py -3.15 --version`;
+      copyToClipboard(allCmds);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("명령어가 클립보드에 복사되었습니다!");
+      }).catch(err => {
+        alert("복사 실패: " + err);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2300);
+    }
+  </script>
+</body>
+</html>

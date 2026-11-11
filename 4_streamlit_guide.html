@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 Streamlit 데이터 대시보드 핵심 함수 가이드</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .k-burgundy {
+      color: #9E1B32;
+    }
+    .bg-k-burgundy {
+      background-color: #9E1B32;
+    }
+    .border-k-burgundy {
+      border-color: #9E1B32;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Streamlit 데이터 대시보드 핵심 함수 치트시트</h1>
+          <p class="text-xs text-slate-500">조선 자재·품질·자동화 데이터 분석용 UI 컴포넌트 & 코드 레퍼런스</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-solid fa-chart-line mr-1"></i>실습 대시보드 전용
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 개요 카드 -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <div class="p-3 bg-red-50 rounded-xl text-red-700 mt-0.5">
+          <i class="fa-solid fa-laptop-code text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">Streamlit(스트림릿)이란?</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            HTML/CSS/JS 없이 <strong>순수 파이썬 코드만으로 인터랙티브한 웹 대시보드</strong>를 제작하는 오픈소스 프레임워크입니다. 사용자가 필터를 조작하면 파이썬 스크립트가 위에서부터 아래로 재실행되어 실시간 분석 결과를 반영합니다.
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto shrink-0">
+        <button onclick="copyToClipboard('.\\.venv\\Scripts\\python.exe -m streamlit run app.py')" class="px-3.5 py-2.5 bg-red-800 hover:bg-red-900 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-play"></i> 앱 실행 명령어 복사
+        </button>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        텍스트 & 레이아웃 (제목·본문)
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        입력 위젯 (드롭다운·라디오·버튼)
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        데이터 & 표 (엑셀형태·메트릭)
+      </button>
+      <button onclick="switchTab(4)" id="tabNav4" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">4</span>
+        차트 & 미디어 (그래프·이미지)
+      </button>
+      <button onclick="switchTab(5)" id="tabNav5" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">5</span>
+        파일 다운로드 & 종합 예제
+      </button>
+    </div>
+
+    <!-- TAB 1: 텍스트 & 레이아웃 -->
+    <div id="tabContent1" class="tab-content block space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-heading text-red-700"></i> 화면 타이틀 및 텍스트 출력 함수
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">대시보드의 계층 구조를 잡고 설명문을 기재할 때 사용합니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- st.title -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                st.title()
+              </span>
+              <button onclick="copyToClipboard('st.title("🚢 케이조선 자재 수급 대시보드")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">큰 제목 (H1)</h4>
+            <p class="text-xs text-slate-600 mb-2">대시보드 페이지의 최상단 메인 타이틀을 출력합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.title("🚢 케이조선 자재 수급 대시보드")</code></pre>
+          </div>
+
+          <!-- st.header -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                st.header()
+              </span>
+              <button onclick="copyToClipboard('st.header("1. 선박 블록별 발주 현황")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">중간 제목 (H2)</h4>
+            <p class="text-xs text-slate-600 mb-2">대시보드의 주요 섹션 또는 분석 단계를 구분할 때 사용합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.header("1. 선박 블록별 발주 현황")</code></pre>
+          </div>
+
+          <!-- st.subheader -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                st.subheader()
+              </span>
+              <button onclick="copyToClipboard('st.subheader("납기 지연 의심 부품 목록")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">소제목 (H3)</h4>
+            <p class="text-xs text-slate-600 mb-2">표나 차트 바로 위에 붙는 작은 단위의 주제 설명 제목입니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.subheader("납기 지연 의심 부품 목록")</code></pre>
+          </div>
+
+          <!-- st.write / st.markdown -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                st.write() & st.markdown()
+              </span>
+              <button onclick="copyToClipboard('st.write("기준일 기준 **미입고 수량**이 남은 품목만 집계됩니다.")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">일반 텍스트 및 서식 본문</h4>
+            <p class="text-xs text-slate-600 mb-2">만능 출력 함수입니다. 텍스트, 데이터프레임, 숫자 등을 알아서 감지해 출력합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.write("기준일 기준 **미입고 수량**이 남은 품목만 집계됩니다.")</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 입력 위젯 -->
+    <div id="tabContent2" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-red-700"></i> 사용자 필터링 및 입력 위젯
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">선택된 값이 변수에 즉시 할당되어 아래쪽 데이터와 차트를 필터링합니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- st.selectbox -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                st.selectbox()
+              </span>
+              <button onclick="copyToClipboard('dept = st.selectbox("조회할 선종을 선택하세요", ["선택안함", "석유화학제품운반선", "컨테이너선", "LNG 벙커링선"])')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">드롭다운 단일 선택 메뉴</h4>
+            <p class="text-xs text-slate-600 mb-2">목록 중 1개 항목을 선택할 때 사용합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>dept = st.selectbox("조회할 선종 선택", ["전체", "석유화학제품운반선", "LNG선"])
+st.write(f"선택한 선종: {dept}")</code></pre>
+          </div>
+
+          <!-- st.radio -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                st.radio()
+              </span>
+              <button onclick="copyToClipboard('status = st.radio("검사 상태 필터", ["전체", "합격", "불합격"])')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">라디오 버튼 (상호 배타적 선택)</h4>
+            <p class="text-xs text-slate-600 mb-2">모든 옵션을 한눈에 펼쳐놓고 1가지를 고르게 할 때 좋습니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>status = st.radio("검사 상태 필터", ["전체", "합격", "불합격"])</code></pre>
+          </div>
+
+          <!-- st.button -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                st.button()
+              </span>
+              <button onclick="copyToClipboard('if st.button("데이터 새로고침"):
+    st.success("최신 데이터로 재계산되었습니다!")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">클릭 동작 버튼</h4>
+            <p class="text-xs text-slate-600 mb-2">클릭한 순간 `True`를 반환하여 특정 동작(계산, 분석)을 실행합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>if st.button("분석 실행"):
+    st.success("지연율 재계산 완료!")</code></pre>
+          </div>
+
+          <!-- st.sidebar -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                st.sidebar
+              </span>
+              <button onclick="copyToClipboard('choice = st.sidebar.selectbox("조건 선택", ["옵션A", "옵션B"])')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">사이드바 제어판 배치</h4>
+            <p class="text-xs text-slate-600 mb-2">화면 좌측 서랍 메뉴에 필터 위젯들을 모아 메인 화면을 깔끔하게 유지합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>ship = st.sidebar.selectbox("선종 선택", ["50k 탱커", "115k 탱커"])</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 데이터 & 표 -->
+    <div id="tabContent3" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-table text-red-700"></i> 표 출력(Excel 스타일) 및 핵심 지표 카드
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">Pandas DataFrame을 엑셀처럼 인터랙티브하게 조회하고 KPI를 강조합니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- st.dataframe -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                st.dataframe()
+              </span>
+              <button onclick="copyToClipboard('st.dataframe(df, use_container_width=True)')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">엑셀 형태의 반응형 데이터 표</h4>
+            <p class="text-xs text-slate-600 mb-2">정렬, 열 크기 조절, 스크롤, 검색이 가능한 인터랙티브 표입니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>import pandas as pd
+df = pd.read_csv("material_orders.csv")
+st.dataframe(df, use_container_width=True)</code></pre>
+          </div>
+
+          <!-- st.table -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                st.table()
+              </span>
+              <button onclick="copyToClipboard('st.table(df.head(5))')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">정적 고정 표</h4>
+            <p class="text-xs text-slate-600 mb-2">스크롤 없이 요약된 상위 몇 개 항목을 문서처럼 딱 고정해 보여줄 때 씁니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.table(df.head(5)) # 상위 5건 고정 출력</code></pre>
+          </div>
+
+          <!-- st.metric -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 md:col-span-2">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                st.metric()
+              </span>
+              <button onclick="copyToClipboard('col1, col2, col3 = st.columns(3)
+col1.metric("총 발주 건수", "1,250건", "+12건")
+col2.metric("평균 불합격률", "5.0%", "-0.8%", delta_color="inverse")
+col3.metric("지연 품목", "8건", "+2건", delta_color="inverse")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">KPI 핵심 지표 카드 (대시보드 상단 배치용)</h4>
+            <p class="text-xs text-slate-600 mb-2">현재 수치와 전월/전일 대비 증감(Delta)을 예쁜 카드로 강조합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>col1, col2, col3 = st.columns(3)
+col1.metric("총 발주 건수", "1,250건", "+12건")
+col2.metric("불합격률", "5.0%", "-0.8%", delta_color="inverse")
+col3.metric("지연 품목", "8건", "+2건", delta_color="inverse")</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 차트 & 미디어 -->
+    <div id="tabContent4" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-red-700"></i> 그래프 시각화 및 이미지 출력
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">선박 공정 추이, 불합격 건수 차트 및 도면/현장 사진을 표시합니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- st.bar_chart & st.line_chart -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                st.bar_chart() / st.line_chart()
+              </span>
+              <button onclick="copyToClipboard('st.bar_chart(df.set_index("납기월")["지연건수"])')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">내장 기본 차트 (막대 / 꺾은선)</h4>
+            <p class="text-xs text-slate-600 mb-2">별도 복잡한 시각화 라이브러리 없이 데이터프레임만 넣으면 즉시 그래프를 그려줍니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code># 월별 지연 건수 막대 그래프
+st.bar_chart(df.set_index("납기월")["지연건수"])</code></pre>
+          </div>
+
+          <!-- st.image -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-slate-900 text-sm font-mono text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                st.image()
+              </span>
+              <button onclick="copyToClipboard('st.image("ship_photo.jpg", caption="50,000톤급 석유화학제품운반선", use_container_width=True)')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">이미지 및 사진 출력</h4>
+            <p class="text-xs text-slate-600 mb-2">로컬 이미지 파일이나 인터넷 URL의 사진을 캡션과 함께 대시보드에 배치합니다.</p>
+            <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>st.image("ship_photo.jpg", 
+         caption="50,000톤급 석유화학제품운반선", 
+         use_container_width=True)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 파일 다운로드 & 종합 예제 -->
+    <div id="tabContent5" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-file-arrow-down text-red-700"></i> 파일 다운로드 버튼 & 실전 통합 예제
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">필터링된 분석 결과를 현업 담당자가 CSV로 내려받을 수 있는 버튼과 완전한 app.py 예제입니다.</p>
+
+        <!-- st.download_button -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 mb-4">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+              st.download_button()
+            </span>
+            <button onclick="copyToClipboard('csv_data = filtered_df.to_csv(index=False).encode("utf-8-sig")
+st.download_button(label="📥 필터링 결과 CSV 다운로드", data=csv_data, file_name="지연품목_분석결과.csv", mime="text/csv")')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+          </div>
+          <h4 class="font-bold text-slate-900 text-xs mb-1">분석 결과 CSV 파일 다운로드 버튼</h4>
+          <p class="text-xs text-slate-600 mb-2">웹 브라우저를 통해 분석된 데이터를 엑셀 호환 CSV(`utf-8-sig`)로 즉시 내려받게 만듭니다.</p>
+          <pre class="bg-slate-900 text-emerald-400 text-xs p-2.5 rounded-lg overflow-x-auto"><code>csv_data = filtered_df.to_csv(index=False).encode("utf-8-sig")
+st.download_button(
+    label="📥 필터링 결과 CSV 다운로드",
+    data=csv_data,
+    file_name="지연품목_분석결과.csv",
+    mime="text/csv"
+)</code></pre>
+        </div>
+
+        <!-- 실전 app.py 통합 템플릿 -->
+        <div class="border border-slate-200 rounded-xl p-4 bg-white">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-brands fa-python text-amber-500 text-sm"></i> app.py 실전 대시보드 올인원 템플릿
+            </span>
+            <button onclick="copyToClipboard(fullAppCode)" class="text-xs bg-red-800 hover:bg-red-900 text-white px-3 py-1.5 rounded transition flex items-center gap-1 shadow-sm">
+              <i class="fa-regular fa-copy"></i> 전체 코드 복사
+            </button>
+          </div>
+          <pre class="bg-slate-900 text-slate-200 text-xs p-4 rounded-xl overflow-x-auto font-mono leading-relaxed"><code id="codeBlock">import streamlit as st
+import pandas as pd
+
+# 1. 페이지 설정 및 제목
+st.set_page_config(page_title="케이조선 자재 분석기", layout="wide")
+st.title("🚢 케이조선 자재 납기 모니터링 대시보드")
+st.write("기준일 기준 미입고 수량이 남아있는 지연 발주 내역을 실시간 추적합니다.")
+
+# 2. 사이드바 필터 위젯
+st.sidebar.header("🔍 조회 필터")
+ship_type = st.sidebar.selectbox("선종 선택", ["전체", "석유화학제품운반선", "컨테이너선", "LNG선"])
+show_delayed_only = st.sidebar.radio("발주 상태", ["전체 보기", "지연 발주만 보기"])
+
+# 3. 핵심 KPI 메트릭 카드
+col1, col2, col3 = st.columns(3)
+col1.metric("총 발주 건수", "1,240건", "+15건")
+col2.metric("지연 위험 건수", "18건", "+3건", delta_color="inverse")
+col3.metric("평균 불합격률", "5.0%", "-0.4%", delta_color="inverse")
+
+# 4. 데이터 표 (엑셀 스타일)
+st.subheader("📋 자재 발주 상세 현황")
+# 가상 데이터 생성 예시
+data = {
+    "발주번호": ["PO-101", "PO-102", "PO-103", "PO-104"],
+    "선종": ["석유화학제품운반선", "컨테이너선", "LNG선", "석유화학제품운반선"],
+    "품목명": ["후판(A급)", "선박용 밸브", "보온 단열재", "고장력 볼트"],
+    "미입고수량": [50, 0, 120, 15],
+    "상태": ["지연", "입고완료", "지연", "지연"]
+}
+df = pd.DataFrame(data)
+
+if ship_type != "전체":
+    df = df[df["선종"] == ship_type]
+if show_delayed_only == "지연 발주만 보기":
+    df = df[df["상태"] == "지연"]
+
+st.dataframe(df, use_container_width=True)
+
+# 5. 차트 & CSV 다운로드
+col_chart, col_down = st.columns([2, 1])
+with col_chart:
+    st.subheader("📊 선종별 지연 현황")
+    st.bar_chart(df["선종"].value_counts())
+
+with col_down:
+    st.subheader("💾 데이터 내보내기")
+    csv_bytes = df.to_csv(index=False).encode("utf-8-sig")
+    st.download_button(
+        label="📥 현재 조회 결과 CSV 다운로드",
+        data=csv_bytes,
+        file_name="kship_material_filtered.csv",
+        mime="text/csv"
+    )
+</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 토스트 알림창 -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 translate-y-20 opacity-0 transition-all duration-300 z-50 border border-slate-700">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toastMsg">클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) 임직원 소프트웨어 개발 실습 가이드 • Streamlit 대시보드 개발 레퍼런스
+    </div>
+  </footer>
+
+  <script>
+    const fullAppCode = `import streamlit as st
+import pandas as pd
+
+# 1. 페이지 설정 및 제목
+st.set_page_config(page_title="케이조선 자재 분석기", layout="wide")
+st.title("🚢 케이조선 자재 납기 모니터링 대시보드")
+st.write("기준일 기준 미입고 수량이 남아있는 지연 발주 내역을 실시간 추적합니다.")
+
+# 2. 사이드바 필터 위젯
+st.sidebar.header("🔍 조회 필터")
+ship_type = st.sidebar.selectbox("선종 선택", ["전체", "석유화학제품운반선", "컨테이너선", "LNG선"])
+show_delayed_only = st.sidebar.radio("발주 상태", ["전체 보기", "지연 발주만 보기"])
+
+# 3. 핵심 KPI 메트릭 카드
+col1, col2, col3 = st.columns(3)
+col1.metric("총 발주 건수", "1,240건", "+15건")
+col2.metric("지연 위험 건수", "18건", "+3건", delta_color="inverse")
+col3.metric("평균 불합격률", "5.0%", "-0.4%", delta_color="inverse")
+
+# 4. 데이터 표 (엑셀 스타일)
+st.subheader("📋 자재 발주 상세 현황")
+data = {
+    "발주번호": ["PO-101", "PO-102", "PO-103", "PO-104"],
+    "선종": ["석유화학제품운반선", "컨테이너선", "LNG선", "석유화학제품운반선"],
+    "품목명": ["후판(A급)", "선박용 밸브", "보온 단열재", "고장력 볼트"],
+    "미입고수량": [50, 0, 120, 15],
+    "상태": ["지연", "입고완료", "지연", "지연"]
+}
+df = pd.DataFrame(data)
+
+if ship_type != "전체":
+    df = df[df["선종"] == ship_type]
+if show_delayed_only == "지연 발주만 보기":
+    df = df[df["상태"] == "지연"]
+
+st.dataframe(df, use_container_width=True)
+
+# 5. 차트 & CSV 다운로드
+col_chart, col_down = st.columns([2, 1])
+with col_chart:
+    st.subheader("📊 선종별 지연 현황")
+    st.bar_chart(df["선종"].value_counts())
+
+with col_down:
+    st.subheader("💾 데이터 내보내기")
+    csv_bytes = df.to_csv(index=False).encode("utf-8-sig")
+    st.download_button(
+        label="📥 현재 조회 결과 CSV 다운로드",
+        data=csv_bytes,
+        file_name="kship_material_filtered.csv",
+        mime="text/csv"
+    )`;
+
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 5; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+        }
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("코드가 클립보드에 복사되었습니다!");
+      }).catch(err => {
+        alert("복사 실패: " + err);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2300);
+    }
+  </script>
+</body>
+</html>
