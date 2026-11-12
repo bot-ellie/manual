@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 AI 에이전트 입문 & 아키텍처 가이드북</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+    .arch-node {
+      transition: all 0.25s ease;
+    }
+    .arch-node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 (기존 케이조선 강의자료 스타일 통일) -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">AI 에이전트 이론 & 아키텍처 입문 가이드북</h1>
+          <p class="text-xs text-slate-500">워크플로우, 하네스, 지침, 스킬, MCP, API 한눈에 이해하기</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-solid fa-brain mr-1"></i>이론 & 전체 윤곽편
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 인트로 핵심 요약 카드 -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <div class="p-3 bg-red-50 rounded-xl text-red-700 mt-0.5 shrink-0">
+          <i class="fa-solid fa-robot text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">단순 챗봇(LLM)과 AI 에이전트(Agent)는 무엇이 다를까요?</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            일반 AI 챗봇이 질문에 대답만 하는 <strong>'똑똑한 백과사전'</strong>이라면, AI 에이전트는 목표를 달성하기 위해 스스로 계획을 세우고, 사내 규칙(지침)을 지키며, 도구(스킬·MCP·API)를 직접 실행하는 <strong>'자율 실무 담당자'</strong>입니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        전체 윤곽 그림 (아키텍처)
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        7대 핵심 용어 완벽 해설
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        워크플로우 vs 자율 에이전트
+      </button>
+      <button onclick="switchTab(4)" id="tabNav4" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">4</span>
+        조선 실무 시나리오 조립도
+      </button>
+    </div>
+
+    <!-- TAB 1: 전체 윤곽 그림 (인터랙티브 아키텍처 다이어그램) -->
+    <div id="tabContent1" class="tab-content block space-y-6">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project text-red-700"></i> 한눈에 보는 AI 에이전트 생태계 전체 그림
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">각 영역을 클릭하면 하단에 초보자 눈높이 설명과 비유가 나타납니다.</p>
+          </div>
+          <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium self-start sm:self-auto">
+            <i class="fa-solid fa-hand-pointer text-red-600 mr-1"></i>카드를 클릭해 보세요
+          </span>
+        </div>
+
+        <!-- 시각적 아키텍처 다이어그램 (SVG + HTML Grid 하이브리드) -->
+        <div class="bg-slate-900 rounded-2xl p-4 sm:p-6 text-slate-100 border border-slate-800 shadow-inner">
+          
+          <!-- 최상단: 사용자 & 워크플로우 -->
+          <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-5">
+            <div onclick="showConceptDetail('user')" class="cursor-pointer arch-node bg-slate-800 border border-slate-700 hover:border-sky-400 rounded-xl px-5 py-3 text-center w-full md:w-56">
+              <div class="text-sky-400 text-lg mb-1"><i class="fa-solid fa-user-tie"></i></div>
+              <div class="font-bold text-sm">사용자 (현업 담당자)</div>
+              <div class="text-[11px] text-slate-400">"오늘 지연된 자재 요약해줘"</div>
+            </div>
+
+            <div class="text-slate-500 hidden md:block"><i class="fa-solid fa-arrow-right-long text-xl"></i></div>
+            <div class="text-slate-500 md:hidden"><i class="fa-solid fa-arrow-down-long text-lg"></i></div>
+
+            <div onclick="showConceptDetail('workflow')" class="cursor-pointer arch-node bg-indigo-950/80 border-2 border-indigo-500/70 hover:border-indigo-400 rounded-xl px-5 py-3 text-center w-full md:w-72">
+              <div class="text-indigo-400 text-lg mb-1"><i class="fa-solid fa-route"></i></div>
+              <div class="font-bold text-sm text-indigo-200">1. 워크플로우 (Workflow)</div>
+              <div class="text-[11px] text-indigo-300/80">전체 업무 순서도와 작업 파이프라인</div>
+            </div>
+          </div>
+
+          <!-- 화살표 -->
+          <div class="text-center text-slate-500 mb-3">
+            <i class="fa-solid fa-arrows-up-down text-lg"></i> <span class="text-[11px] font-mono text-slate-400 ml-1">실행 및 제어 루프 (Loop)</span>
+          </div>
+
+          <!-- 중단: 하네스 (Harness) 거대 외곽 컨테이너 -->
+          <div class="border-2 border-dashed border-amber-500/60 bg-amber-950/15 rounded-2xl p-4 sm:p-5 relative mb-5">
+            <div onclick="showConceptDetail('harness')" class="cursor-pointer inline-flex items-center gap-2 bg-amber-500 text-slate-950 font-extrabold text-xs px-3 py-1 rounded-full mb-4 shadow hover:bg-amber-400 transition">
+              <i class="fa-solid fa-shield-halved"></i> 2. 하네스 (Agent Harness) — 안전장치 · 실행 환경 · 권한 통제실
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+              <!-- 좌측: Agent 지침 -->
+              <div onclick="showConceptDetail('instructions')" class="cursor-pointer arch-node bg-slate-800/90 border border-rose-500/60 hover:border-rose-400 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-rose-300 bg-rose-950 px-2 py-0.5 rounded border border-rose-800">규칙 · 뇌의 기준</span>
+                    <i class="fa-solid fa-file-contract text-rose-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-white mb-1">3. Agent 지침 (Instructions)</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    역할, 말투, 금지 사항, 사내 표준 기준을 정의한 업무 매뉴얼 (<code class="text-rose-300">AGENTS.md</code>, 시스템 프롬프트)
+                  </p>
+                </div>
+                <div class="mt-3 pt-2 border-t border-slate-700/80 text-[11px] text-slate-400">
+                  비유: <strong>신입사원 사내 업무 규정집</strong>
+                </div>
+              </div>
+
+              <!-- 중앙: LLM 코어 두뇌 -->
+              <div onclick="showConceptDetail('llm')" class="cursor-pointer arch-node bg-gradient-to-b from-red-900/70 to-slate-800 border-2 border-red-500 rounded-xl p-4 flex flex-col justify-between text-center shadow-lg">
+                <div>
+                  <div class="w-10 h-10 rounded-full bg-red-600/30 border border-red-400 flex items-center justify-center mx-auto mb-2 text-red-300">
+                    <i class="fa-solid fa-microchip text-lg"></i>
+                  </div>
+                  <h4 class="font-bold text-base text-white">AI 추론 엔진 (LLM)</h4>
+                  <p class="text-xs text-red-200/90 mt-1">
+                    상황 판단 · 계획 수립 · 도구 선택
+                  </p>
+                </div>
+                <div class="my-3 bg-slate-950/60 rounded-lg p-2 text-[11px] font-mono text-emerald-300 border border-slate-700">
+                  생각(Think) → 행동(Act) → 관찰(Observe)
+                </div>
+                <div class="text-[11px] text-slate-300">
+                  비유: <strong>판단하고 지시하는 팀장님 두뇌</strong>
+                </div>
+              </div>
+
+              <!-- 우측: 스킬 & 플러그인 -->
+              <div onclick="showConceptDetail('skills')" class="cursor-pointer arch-node bg-slate-800/90 border border-emerald-500/60 hover:border-emerald-400 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-emerald-300 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">능력 · 확장 기능</span>
+                    <i class="fa-solid fa-toolbox text-emerald-400"></i>
+                  </div>
+                  <h4 class="font-bold text-sm text-white mb-1">4. 스킬 & 플러그인 (Skills / Plugins)</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    특정 작업을 잘 수행하도록 묶어둔 전문 기술 패키지 (코드 실행, 엑셀 분석, PDF 읽기 등)
+                  </p>
+                </div>
+                <div class="mt-3 pt-2 border-t border-slate-700/80 text-[11px] text-slate-400">
+                  비유: <strong>직무별 자격증 & 전용 공구함</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 연결 브릿지 화살표 -->
+          <div class="grid grid-cols-2 gap-4 text-center text-slate-400 mb-3 text-xs">
+            <div><i class="fa-solid fa-plug text-sky-400 mr-1"></i> 표준 규격 연결 (USB-C 방식)</div>
+            <div><i class="fa-solid fa-bolt text-purple-400 mr-1"></i> 직접 통신 연결 (전용선 방식)</div>
+          </div>
+
+          <!-- 하단: 외부 세계 연결 (MCP & API) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- MCP -->
+            <div onclick="showConceptDetail('mcp')" class="cursor-pointer arch-node bg-sky-950/60 border border-sky-500/70 hover:border-sky-400 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-sm text-sky-300 flex items-center gap-2">
+                  <i class="fa-solid fa-network-wired"></i> 5. MCP (Model Context Protocol)
+                </span>
+                <span class="text-[10px] bg-sky-900 text-sky-200 px-2 py-0.5 rounded font-mono">표준 커넥터</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                AI 모델이 로컬 파일, DB, 사내 툴과 <strong>표준화된 규격으로 즉시 연결</strong>되도록 만든 개방형 프로토콜입니다.
+              </p>
+              <div class="mt-2 text-[11px] text-sky-300/90">비유: 어떤 기기든 한 번에 꽂히는 <strong>만능 USB-C 표준 포트</strong></div>
+            </div>
+
+            <!-- API -->
+            <div onclick="showConceptDetail('api')" class="cursor-pointer arch-node bg-purple-950/60 border border-purple-500/70 hover:border-purple-400 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-sm text-purple-300 flex items-center gap-2">
+                  <i class="fa-solid fa-code-branch"></i> 6. API 활용 (Application Programming Interface)
+                </span>
+                <span class="text-[10px] bg-purple-900 text-purple-200 px-2 py-0.5 rounded font-mono">서비스 창구</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                외부 시스템(ERP, 날씨, 메신저, 환율 등)에 데이터를 요청하고 결과를 받아오는 <strong>프로그램 간 공식 대화 창구</strong>입니다.
+              </p>
+              <div class="mt-2 text-[11px] text-purple-300/90">비유: 손님(AI)과 주방(시스템)을 연결하는 <strong>식당 점원</strong></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 클릭 시 상세 설명 동적 패널 -->
+        <div id="conceptDetailBox" class="mt-5 bg-red-50/70 border border-red-200 rounded-xl p-4 transition-all">
+          <div class="flex items-start gap-3">
+            <div class="p-2 bg-red-700 text-white rounded-lg shrink-0 mt-0.5">
+              <i id="detailIcon" class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+              <h4 id="detailTitle" class="font-bold text-slate-900 text-sm">다이어그램의 각 카드를 클릭해 상세 원리를 확인하세요!</h4>
+              <p id="detailDesc" class="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+                위 그림에서 <strong>워크플로우, 하네스, Agent 지침, 스킬, MCP, API</strong> 박스를 클릭하면, 초보자가 실무에서 어떻게 이 요소들을 조립해 에이전트를 만드는지 구체적인 예시를 보여드립니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 7대 핵심 용어 완벽 해설 -->
+    <div id="tabContent2" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 에이전트 개발 입문자 필수 용어 7가지 정리
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          용어들이 헷갈릴 때는 <strong>'회사 조직'</strong>이나 <strong>'자동차 운전'</strong>에 비유하면 명확하게 구분됩니다.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 1. 워크플로우 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded text-xs">1. 워크플로우 (Workflow)</span>
+              <span class="text-xs text-slate-500">업무 흐름도</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              특정 목표를 달성하기 위해 <strong>단계별로 정해진 작업 순서</strong>입니다. (예: 1단계 데이터 수집 → 2단계 불량 판정 → 3단계 보고서 생성)
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> AI에게 모든 걸 맡기지 않고, 정해진 길(순서)을 따라가게 설계하면 결과가 훨씬 안정적입니다.
+            </div>
+          </div>
+
+          <!-- 2. 하네스 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded text-xs">2. 하네스 (Harness)</span>
+              <span class="text-xs text-slate-500">안전장치 및 실행 틀</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              원래 말(Horse)을 제어하기 위해 씌우는 '마구(고삐·안장)'에서 유래했습니다. AI 모델이 폭주하거나 잘못된 파일을 지우지 못하도록 감싸는 <strong>실행 환경, 권한 통제, 반복 루프 제어 프레임워크</strong>입니다. (예: Codex CLI, Claude Code 자체)
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> 같은 AI 모델이라도 어떤 '하네스' 위에서 돌리느냐에 따라 코딩 실력과 안전성이 크게 달라집니다.
+            </div>
+          </div>
+
+          <!-- 3. Agent 지침 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-rose-900 bg-rose-100 px-2.5 py-0.5 rounded text-xs">3. Agent 지침 (Instructions)</span>
+              <span class="text-xs text-slate-500">행동 수칙 & 규칙</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              에이전트가 작업할 때 항상 머릿속에 넣고 지켜야 할 <strong>역할, 출력 형식, 제약 조건</strong>입니다. 프로젝트 폴더의 <code class="bg-white px-1 border rounded">AGENTS.md</code> 파일이 대표적입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> "원본 CSV는 절대 수정하지 마", "답변은 한국어로 작성해" 같은 규칙을 적어두는 곳입니다.
+            </div>
+          </div>
+
+          <!-- 4. 스킬 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-emerald-900 bg-emerald-100 px-2.5 py-0.5 rounded text-xs">4. 스킬 (Skills)</span>
+              <span class="text-xs text-slate-500">전문 작업 레시피</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              에이전트가 특정 도메인 작업을 정확하게 수행할 수 있도록 <strong>지침 + 스크립트 + 참고 문서를 하나로 묶어둔 모듈</strong>입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> 'PDF 표 추출 스킬', '선박 자재 지연율 계산 스킬'처럼 필요한 능력만 쏙쏙 장착시킬 수 있습니다.
+            </div>
+          </div>
+
+          <!-- 5. 플러그인 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-teal-900 bg-teal-100 px-2.5 py-0.5 rounded text-xs">5. 플러그인 (Plugins)</span>
+              <span class="text-xs text-slate-500">확장 기능 앱</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              기본 에이전트 플랫폼에 <strong>추가 기능을 손쉽게 끼워 넣는 완제품 확장 프로그램</strong>입니다. 스마트폰에 앱을 설치하는 것과 같습니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> 웹 검색 플러그인, 코드 실행기 플러그인 등을 켜면 AI의 손발이 즉시 늘어납니다.
+            </div>
+          </div>
+
+          <!-- 6. MCP -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-sky-900 bg-sky-100 px-2.5 py-0.5 rounded text-xs">6. MCP (Model Context Protocol)</span>
+              <span class="text-xs text-slate-500">만능 표준 연결 규격</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              AI와 외부 데이터(로컬 폴더, 데이터베이스, GitHub, 슬랙 등)를 연결할 때 <strong>제각각 코드를 짜지 않고 하나의 표준 규약으로 연결</strong>하는 기술입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>핵심 포인트:</strong> 예전엔 기기마다 충전기가 달랐지만 이제 USB-C 하나로 통일된 것처럼, AI 도구 연결의 표준입니다.
+            </div>
+          </div>
+
+          <!-- 7. API 활용 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 md:col-span-2">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-purple-900 bg-purple-100 px-2.5 py-0.5 rounded text-xs">7. API 활용 (Application Programming Interface)</span>
+              <span class="text-xs text-slate-500">외부 시스템 데이터 통신</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              사내 시스템, 공공데이터포털, 기상청, 사내 메신저 등 <strong>다른 소프트웨어의 기능이나 데이터를 코드로 호출해 가져오는 방법</strong>입니다. 에이전트가 실시간 환율이나 선박 입출항 정보를 조회할 때 API를 호출합니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>MCP와 API의 관계:</strong> API가 각 식당의 고유한 '주문 방식'이라면, MCP는 AI가 여러 식당의 API를 똑같은 방식으로 쉽게 주문할 수 있게 표준화해 준 '통합 배달 플랫폼'에 가깝습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 워크플로우 vs 자율 에이전트 -->
+    <div id="tabContent3" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-code-compare text-red-700"></i> 초보자가 꼭 알아야 할 설계 선택: 워크플로우 vs 에이전트
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          무조건 AI에게 모든 자율성을 주는 것이 정답은 아닙니다. 업무 성격에 따라 두 가지 방식을 조합해야 합니다.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- 워크플로우 방식 -->
+          <div class="border-2 border-indigo-200 rounded-xl p-5 bg-indigo-50/30">
+            <div class="flex items-center gap-2 text-indigo-800 font-bold text-base mb-2">
+              <i class="fa-solid fa-train-subway"></i> 1. 워크플로우 중심 (기차 레일 방식)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-3">
+              개발자가 미리 <strong>[A → B → C] 순서</strong>를 코드로 고정해 두고, 각 단계에서만 AI의 지능을 빌려 쓰는 방식입니다.
+            </p>
+            <div class="bg-white rounded-lg p-3 border border-indigo-100 text-xs space-y-1.5 mb-3">
+              <div class="font-bold text-slate-800">✅ 언제 사용할까요?</div>
+              <p class="text-slate-600">• 매일 아침 8시에 실행하는 <strong>일일 자재/품질 정형 보고서</strong></p>
+              <p class="text-slate-600">• 계산 공식과 출력 양식이 엄격하게 정해진 업무</p>
+            </div>
+            <div class="text-xs font-semibold text-indigo-700">
+              👍 장점: 결과물이 예측 가능하고 오류가 적으며 비용이 저렴함
+            </div>
+          </div>
+
+          <!-- 자율 에이전트 방식 -->
+          <div class="border-2 border-red-200 rounded-xl p-5 bg-red-50/30">
+            <div class="flex items-center gap-2 text-red-800 font-bold text-base mb-2">
+              <i class="fa-solid fa-taxi"></i> 2. 자율 에이전트 중심 (택시 운전 방식)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-3">
+              목적지(목표)만 알려주면 AI가 <strong>상황을 보며 스스로 도구를 고르고, 에러가 나면 고쳐가며</strong> 목표를 달성할 때까지 반복 실행하는 방식입니다.
+            </p>
+            <div class="bg-white rounded-lg p-3 border border-red-100 text-xs space-y-1.5 mb-3">
+              <div class="font-bold text-slate-800">✅ 언제 사용할까요?</div>
+              <p class="text-slate-600">• 코드에 버그가 났을 때 원인을 찾아 수정하는 디버깅</p>
+              <p class="text-slate-600">• 정해지지 않은 다양한 데이터를 탐색해 인사이트를 찾는 업무</p>
+            </div>
+            <div class="text-xs font-semibold text-red-700">
+              👍 장점: 복잡한 예외 상황에 유연하게 대처하며 사람처럼 문제를 해결함
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 조선 실무 시나리오 조립도 -->
+    <div id="tabContent4" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-industry text-red-700"></i> 실전 시나리오: "선박 자재 납기 지연 브리핑 에이전트" 조립 예시
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          방금 배운 7가지 개념이 실제 우리 실습(2차시~5차시)에서 어떻게 하나로 합쳐지는지 확인해 보세요.
+        </p>
+
+        <div class="space-y-3">
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-amber-600 text-white font-bold text-xs shrink-0 mt-0.5">하네스</span>
+            <div class="text-xs text-slate-700">
+              <strong>Codex CLI (실행 환경):</strong> 터미널에서 파이썬 코드를 실행하고 파일 수정 권한(<code class="font-mono">/permissions</code>)을 통제하는 안전 울타리 역할을 합니다.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-rose-700 text-white font-bold text-xs shrink-0 mt-0.5">Agent 지침</span>
+            <div class="text-xs text-slate-700">
+              <strong>AGENTS.md & 프롬프트 규칙:</strong> "원본 CSV는 절대 수정하지 마라", "당일 납기는 지연에서 제외하라", "보안 금지 정보는 입력하지 마라"는 기준을 부여합니다.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-sky-700 text-white font-bold text-xs shrink-0 mt-0.5">MCP / 파일연결</span>
+            <div class="text-xs text-slate-700">
+              <strong>로컬 파일 시스템 접근:</strong> 에이전트가 내 PC의 <code class="font-mono">data/material_orders.csv</code> 파일을 직접 읽고 <code class="font-mono">outputs/</code> 폴더에 결과물을 저장합니다.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-emerald-700 text-white font-bold text-xs shrink-0 mt-0.5">스킬 / 도구</span>
+            <div class="text-xs text-slate-700">
+              <strong>Python & Pandas 실행 능력:</strong> 가상환경(<code class="font-mono">.venv</code>)의 파이썬을 실행하여 240행의 데이터를 계산하고 검증 테스트(<code class="font-mono">unittest</code>)를 수행합니다.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-purple-700 text-white font-bold text-xs shrink-0 mt-0.5">API 활용 (확장)</span>
+            <div class="text-xs text-slate-700">
+              <strong>외부 시스템 연동:</strong> 추후 사내 ERP API나 환율 API, 사내 메신저 웹훅 API를 연결하면 실시간 자재 단가 환산 및 담당자 알림까지 자동화할 수 있습니다.
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+            <span class="px-2.5 py-1 rounded bg-indigo-700 text-white font-bold text-xs shrink-0 mt-0.5">워크플로우</span>
+            <div class="text-xs text-slate-700">
+              <strong>daily_brief.py 파이프라인:</strong> [데이터 검증 → 지연 계산 → Markdown/HTML 보고서 생성 → 공급사 초안 작성]의 정해진 절차를 매일 동일하게 수행합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) 임직원 AI 에이전트 개발 입문 가이드 • 이론 & 전체 아키텍처 편
+    </div>
+  </footer>
+
+  <script>
+    const conceptDetails = {
+      user: {
+        icon: "fa-user-tie",
+        title: "사용자 (현업 담당자) — 목표 제시 및 최종 승인자",
+        desc: "에이전트에게 '무엇을 달성해야 하는지' 목표와 기준을 부여합니다. AI가 만든 결과물의 사실 여부를 최종 검증하고 책임지는 주체입니다."
+      },
+      workflow: {
+        icon: "fa-route",
+        title: "워크플로우 (Workflow) — 업무가 흘러가는 전체 설계도",
+        desc: "데이터 수집 → 정제 → 분석 → 보고서 작성처럼 작업이 진행되는 단계별 흐름입니다. 정형화된 업무는 워크플로우로 뼈대를 잡고, 판단이 필요한 부분에 에이전트를 배치합니다."
+      },
+      harness: {
+        icon: "fa-shield-halved",
+        title: "하네스 (Agent Harness) — AI를 안전하게 길들이는 실행 프레임워크",
+        desc: "AI 모델(두뇌)이 실제 컴퓨터 파일을 읽고 명령어를 실행할 수 있도록 손발을 달아주는 동시에, 위험한 명령을 차단(권한 승인)하고 작업 순서를 관리하는 껍데기(플랫폼)입니다."
+      },
+      instructions: {
+        icon: "fa-file-contract",
+        title: "Agent 지침 (Instructions) — 에이전트가 반드시 지켜야 할 사규",
+        desc: "AGENTS.md나 시스템 프롬프트에 작성하는 규칙입니다. '원본 데이터는 건드리지 마라', '계산 공식은 이것을 써라'처럼 에이전트의 행동 범위를 명확히 규정합니다."
+      },
+      llm: {
+        icon: "fa-microchip",
+        title: "AI 추론 엔진 (LLM) — 상황을 판단하는 핵심 두뇌",
+        desc: "GPT, Claude, Gemini 같은 거대언어모델입니다. 사용자의 요청과 지침을 읽고, 지금 어떤 스킬이나 MCP 도구를 호출해야 할지 스스로 추론합니다."
+      },
+      skills: {
+        icon: "fa-toolbox",
+        title: "스킬 & 플러그인 (Skills / Plugins) — 장착 가능한 전문 기술 모듈",
+        desc: "에이전트에게 특정 업무 노하우(예: 용접 불합격률 산출법, 엑셀 서식 작성법)나 추가 기능(웹 검색, 코드 실행기)을 모듈 형태로 끼워 넣어 능력을 확장합니다."
+      },
+      mcp: {
+        icon: "fa-network-wired",
+        title: "MCP (Model Context Protocol) — AI와 외부 도구를 잇는 표준 USB-C",
+        desc: "과거에는 AI를 내 PC 폴더, GitHub, 사내 DB에 연결할 때마다 복잡한 맞춤 개발이 필요했습니다. MCP는 이를 하나의 표준 규격으로 통일해 플러그처럼 쉽게 꽂아 쓰게 해줍니다."
+      },
+      api: {
+        icon: "fa-code-branch",
+        title: "API 활용 — 외부 소프트웨어와 데이터를 주고받는 공식 창구",
+        desc: "ERP 자재 현황, 기상청 해상 날씨, 사내 메신저 알림 등 다른 프로그램이 가진 기능과 실시간 데이터를 코드로 호출해 에이전트의 작업에 활용하는 기술입니다."
+      }
+    };
+
+    function showConceptDetail(key) {
+      const data = conceptDetails[key];
+      if (!data) return;
+      document.getElementById('detailIcon').className = `fa-solid ${data.icon}`;
+      document.getElementById('detailTitle').textContent = data.title;
+      document.getElementById('detailDesc').textContent = data.desc;
+
+      const box = document.getElementById('conceptDetailBox');
+      box.classList.remove('bg-red-50/70');
+      box.classList.add('bg-amber-50');
+      setTimeout(() => {
+        box.classList.remove('bg-amber-50');
+        box.classList.add('bg-red-50/70');
+      }, 300);
+    }
+
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 4; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
