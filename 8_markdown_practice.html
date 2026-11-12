@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 AI 바이브 코딩 — Markdown 기초 문법 & 실시간 연습장</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre, textarea {
+      font-family: 'JetBrains Mono', 'Pretendard', monospace;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+    /* 마크다운 실시간 렌더링 결과 스타일 */
+    .md-preview h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 2px solid #9E1B32;
+      padding-bottom: 0.35rem;
+      margin: 0.75rem 0 0.6rem;
+    }
+    .md-preview h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0.75rem 0 0.45rem;
+    }
+    .md-preview h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #9E1B32;
+      margin: 0.6rem 0 0.35rem;
+    }
+    .md-preview p {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: #334155;
+      margin: 0.35rem 0;
+    }
+    .md-preview ul {
+      list-style-type: disc;
+      padding-left: 1.35rem;
+      margin: 0.4rem 0;
+      font-size: 0.875rem;
+      color: #334155;
+    }
+    .md-preview ol {
+      list-style-type: decimal;
+      padding-left: 1.35rem;
+      margin: 0.4rem 0;
+      font-size: 0.875rem;
+      color: #334155;
+    }
+    .md-preview li {
+      margin: 0.2rem 0;
+    }
+    .md-preview strong {
+      font-weight: 700;
+      color: #0f172a;
+      background-color: #fef2f2;
+      padding: 0 0.2rem;
+      border-radius: 0.2rem;
+    }
+    .md-preview code.inline-code {
+      background-color: #f1f5f9;
+      color: #be123c;
+      border: 1px solid #e2e8f0;
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .md-preview pre.code-block {
+      background-color: #0f172a;
+      color: #34d399;
+      padding: 0.75rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+    .md-preview blockquote {
+      border-left: 4px solid #9E1B32;
+      background-color: #fff1f2;
+      color: #881337;
+      padding: 0.45rem 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 0 0.4rem 0.4rem 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .md-preview hr {
+      border: 0;
+      border-top: 1px solid #cbd5e1;
+      margin: 0.85rem 0;
+    }
+    .md-preview table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0;
+      font-size: 0.82rem;
+    }
+    .md-preview th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      border: 1px solid #cbd5e1;
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+    }
+    .md-preview td {
+      border: 1px solid #cbd5e1;
+      padding: 0.4rem 0.6rem;
+      color: #334155;
+    }
+    .md-preview tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">AI 프롬프트 & 실무 문서 작성을 위한 Markdown 기초·실습 가이드</h1>
+          <p class="text-xs text-slate-500">10대 핵심 문법 해설 · 케이조선 실무 예문 · 실시간 마크다운 라이브 에디터</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-brands fa-markdown text-red-600 mr-1"></i>prompts.md · SKILL.md · 브리핑 필수 문법
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 상단 핵심 요약 카드 -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <div class="p-3 bg-red-50 rounded-xl text-red-700 mt-0.5 shrink-0">
+          <i class="fa-brands fa-markdown text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">왜 바이브 코딩 수업에서 Markdown(<code>.md</code>)을 배울까요?</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            AI(Codex, ChatGPT)는 줄글보다 <strong><code>#</code> 제목, <code>-</code> 목록, <code>**강조**</code>, <code>`코드`</code>, <code>|표|</code></strong>로 구조화된 지시를 훨씬 정확하게 이해합니다. 우리가 작성하는 <strong><code>prompts.md</code></strong>, 나만의 자동화 지침서 <strong><code>SKILL.md</code></strong>, 그리고 일일 운영 브리핑 결과물(<strong><code>daily_brief.md</code></strong>) 모두 마크다운으로 작성됩니다.
+          </p>
+        </div>
+      </div>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-xs text-slate-600 shrink-0 w-full md:w-auto">
+        <div class="font-bold text-slate-800 mb-1"><i class="fa-solid fa-graduation-cap text-red-700 mr-1"></i>학습 구성 (3개 탭)</div>
+        <div>① 10대 핵심 문법 & 적용 결과 표 · ② 케이조선 실무 예문 모음 · <strong>③ 실시간 마크다운 연습장</strong></div>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        Markdown 10대 핵심 태그 & 적용 결과 한눈에 보기
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        수업 자료 속 케이조선 실전 예문 (프롬프트 · SKILL · 브리핑)
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        [직접 실습] 실시간 Markdown 연습장 & 퀴즈
+      </button>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: Markdown 10대 핵심 태그 & 적용 결과 표               -->
+    <!-- ========================================================= -->
+    <div id="tabContent1" class="tab-content block space-y-6">
+
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-table-list text-red-700"></i> 수업 핵심 Markdown 10종 요약 & 적용 결과 비교표
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+              기호 뒤에 <strong>띄어쓰기(Space) 한 칸</strong>을 넣어야 정상 적용되는 태그(<code>#</code>, <code>-</code>, <code>1.</code>, <code>&gt;</code>)와 텍스트 양옆을 감싸는 태그(<code>** **</code>, <code>` `</code>)를 구분해 익혀보세요.
+            </p>
+          </div>
+          <span class="text-xs font-semibold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 shrink-0">
+            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>기호 뒤 띄어쓰기 주의!
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white">
+                <th class="py-3 px-3.5 font-bold w-28">Markdown</th>
+                <th class="py-3 px-3 font-bold w-28">의미</th>
+                <th class="py-3 px-3.5 font-bold w-40">활용 목적 (수업 기준)</th>
+                <th class="py-3 px-3.5 font-bold">케이조선 활용 예시 (입력 코드)</th>
+                <th class="py-3 px-3.5 font-bold w-60">적용 결과 (렌더링 화면)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <!-- 1. # -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">#</td>
+                <td class="py-3 px-3 font-bold text-slate-900">제목 (대제목)</td>
+                <td class="py-3 px-3.5 text-slate-600">문서 전체 주제 및 프롬프트 최상위 구조 구분</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono"># 일일 운영 브리핑</code>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-base font-extrabold text-slate-900 border-b-2 border-red-700 pb-0.5">일일 운영 브리핑</div>
+                </td>
+              </tr>
+
+              <!-- 2. ## -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">##</td>
+                <td class="py-3 px-3 font-bold text-slate-900">중제목</td>
+                <td class="py-3 px-3.5 text-slate-600">프롬프트 역할·명령·형식 및 보고서 큰 항목 분리</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono">## 자재 지연 현황 요약</code>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-sm font-bold text-slate-800">자재 지연 현황 요약</div>
+                </td>
+              </tr>
+
+              <!-- 3. ### -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">###</td>
+                <td class="py-3 px-3 font-bold text-slate-900">소제목</td>
+                <td class="py-3 px-3.5 text-slate-600">항목 내부의 세부 영역 및 출력 형식 세분화</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono">### 품질 현황 (기준일까지 누적)</code>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="text-xs font-bold text-red-800">품질 현황 (기준일까지 누적)</div>
+                </td>
+              </tr>
+
+              <!-- 4. - -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">-</td>
+                <td class="py-3 px-3 font-bold text-slate-900">목록 (글머리)</td>
+                <td class="py-3 px-3.5 text-slate-600">순서와 무관한 요구사항, 제약조건, KPI 항목 나열</td>
+                <td class="py-3 px-3.5">
+                  <pre class="bg-slate-900 text-emerald-400 px-2.5 py-1.5 rounded font-mono text-[11px] leading-snug">- 전체 발주 행: 240건
+- 지연 행: 94건</pre>
+                </td>
+                <td class="py-3 px-3.5">
+                  <ul class="list-disc list-inside text-slate-700 space-y-0.5">
+                    <li>전체 발주 행: 240건</li>
+                    <li>지연 행: 94건</li>
+                  </ul>
+                </td>
+              </tr>
+
+              <!-- 5. 1. -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">1.</td>
+                <td class="py-3 px-3 font-bold text-slate-900">번호 목록</td>
+                <td class="py-3 px-3.5 text-slate-600"><code>SKILL.md</code>의 작업 절차처럼 실행 순서 지정</td>
+                <td class="py-3 px-3.5">
+                  <pre class="bg-slate-900 text-emerald-400 px-2.5 py-1.5 rounded font-mono text-[11px] leading-snug">1. 입력 CSV 파일 확인
+2. daily_brief.py 실행</pre>
+                </td>
+                <td class="py-3 px-3.5">
+                  <ol class="list-decimal list-inside text-slate-700 space-y-0.5">
+                    <li>입력 CSV 파일 확인</li>
+                    <li>daily_brief.py 실행</li>
+                  </ol>
+                </td>
+              </tr>
+
+              <!-- 6. **텍스트** -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">**텍스트**</td>
+                <td class="py-3 px-3 font-bold text-slate-900">강조 (굵게)</td>
+                <td class="py-3 px-3.5 text-slate-600">AI가 놓치면 안 되는 핵심 조건·임계치 강조</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono">**중요 지연 자재(critical=Y)** 우선 확인</code>
+                </td>
+                <td class="py-3 px-3.5 text-slate-700">
+                  <strong class="font-bold text-slate-900 bg-red-50 px-1 rounded">중요 지연 자재(critical=Y)</strong> 우선 확인
+                </td>
+              </tr>
+
+              <!-- 7. `텍스트` -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">`텍스트`</td>
+                <td class="py-3 px-3 font-bold text-slate-900">코드 / 키워드</td>
+                <td class="py-3 px-3.5 text-slate-600">파일명, 컬럼명, 옵션명, 호선 코드 등 정확한 명칭 표기</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono">`KS-101` 호선의 `material_orders.csv` 분석</code>
+                </td>
+                <td class="py-3 px-3.5 text-slate-700">
+                  <code class="bg-slate-100 text-rose-700 border border-slate-200 px-1.5 py-0.5 rounded font-mono text-[11px]">KS-101</code> 호선의 <code class="bg-slate-100 text-rose-700 border border-slate-200 px-1.5 py-0.5 rounded font-mono text-[11px]">material_orders.csv</code> 분석
+                </td>
+              </tr>
+
+              <!-- 8. > -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">&gt;</td>
+                <td class="py-3 px-3 font-bold text-slate-900">인용문</td>
+                <td class="py-3 px-3.5 text-slate-600">주의사항, 절대 금지 규칙, 검토용 초안 안내 표시</td>
+                <td class="py-3 px-3.5">
+                  <code class="bg-slate-900 text-emerald-400 px-2.5 py-1 rounded block font-mono">&gt; 반드시 포함: 원본 CSV 수정 금지 및 외부 전송 금지</code>
+                </td>
+                <td class="py-3 px-3.5">
+                  <div class="border-l-4 border-red-700 bg-red-50 text-red-900 px-2.5 py-1 rounded-r text-[11px] font-medium">
+                    반드시 포함: 원본 CSV 수정 금지 및 외부 전송 금지
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 9. --- -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">---</td>
+                <td class="py-3 px-3 font-bold text-slate-900">구분선</td>
+                <td class="py-3 px-3.5 text-slate-600">문서 섹션 분리 및 <code>SKILL.md</code> 상단 YAML 설정 영역 구분</td>
+                <td class="py-3 px-3.5">
+                  <pre class="bg-slate-900 text-emerald-400 px-2.5 py-1.5 rounded font-mono text-[11px] leading-snug">요약 섹션 끝
+---
+상세 지연 목록 시작</pre>
+                </td>
+                <td class="py-3 px-3.5 text-slate-600">
+                  <div>요약 섹션 끝</div>
+                  <hr class="border-slate-300 my-1.5">
+                  <div>상세 지연 목록 시작</div>
+                </td>
+              </tr>
+
+              <!-- 10. 표(Table) -->
+              <tr class="hover:bg-slate-50">
+                <td class="py-3 px-3.5 font-mono font-bold text-red-700 text-sm">| 항목 | 내용 |</td>
+                <td class="py-3 px-3 font-bold text-slate-900">표 (Table)</td>
+                <td class="py-3 px-3.5 text-slate-600">구조화된 집계 데이터 출력 및 AI 출력 형식 지정</td>
+                <td class="py-3 px-3.5">
+                  <pre class="bg-slate-900 text-emerald-400 px-2.5 py-1.5 rounded font-mono text-[11px] leading-snug">| 호선 | 지연 건수 |
+|---|---|
+| KS-101 | 24건 |</pre>
+                </td>
+                <td class="py-3 px-3.5">
+                  <table class="w-full border-collapse border border-slate-300 text-[11px]">
+                    <thead>
+                      <tr class="bg-slate-100">
+                        <th class="border border-slate-300 px-2 py-1 font-bold">호선</th>
+                        <th class="border border-slate-300 px-2 py-1 font-bold">지연 건수</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-slate-300 px-2 py-1">KS-101</td>
+                        <td class="border border-slate-300 px-2 py-1">24건</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 보너스: 코드 블록 ``` 안내 카드 -->
+      <div class="bg-slate-900 text-slate-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-slate-800">
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-star"></i> 수업에서 자주 쓰는 추가 꿀팁: 여러 줄 코드 블록 (```)
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            백틱 1개(<code>`코드`</code>)는 문장 속 짧은 단어에 쓰고, <strong>백틱 3개(<code>```powershell</code> ~ <code>```</code>)</strong>로 위아래를 감싸면 터미널 실행 명령어나 파이썬 코드 여러 줄을 깔끔한 상자로 묶어 AI에게 전달할 수 있습니다.
+          </p>
+        </div>
+        <pre class="bg-slate-950 border border-slate-700 text-emerald-400 text-xs p-3 rounded-lg font-mono shrink-0">```powershell
+.\.venv\Scripts\python.exe daily_brief.py --as-of 2026-11-13
+```</pre>
+      </div>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: 수업 자료 속 케이조선 실전 예문 모음                  -->
+    <!-- ========================================================= -->
+    <div id="tabContent2" class="tab-content hidden space-y-6">
+
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 지금까지 수업에서 만든 Markdown 문서 3대 실전 예문
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          1~5차시 수업에서 실제로 다루었던 <strong>① 프롬프트(<code>prompts.md</code>)</strong>, <strong>② 스킬 정의서(<code>SKILL.md</code>)</strong>, <strong>③ 일일 브리핑 보고서(<code>daily_brief.md</code>)</strong> 속에 위 10가지 태그가 어떻게 결합되어 쓰이는지 확인해 보세요.
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <!-- 예문 1: prompts.md -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold bg-slate-800 text-white px-2.5 py-0.5 rounded">예문 1 · prompts.md</span>
+                <button onclick="loadPresetToEditor(1)" class="text-xs text-red-700 hover:underline font-bold">
+                  연습장으로 불러오기 →
+                </button>
+              </div>
+              <p class="text-xs text-slate-600 mb-2.5">
+                <code>##</code> 중제목으로 역할·맥락·명령·형식·제한을 나누고, <code>`백틱`</code>으로 파일명과 컬럼명을 정확히 지정한 프롬프트 구조입니다.
+              </p>
+              <pre class="bg-slate-900 text-slate-200 text-[11px] p-3.5 rounded-lg overflow-x-auto leading-relaxed font-mono"># 자재 납기 지연 분석 프롬프트
+
+## 역할
+너는 케이조선 자재·조달 데이터 분석 도우미야.
+
+## 맥락
+`data/material_orders.csv` 파일의 기준일은 `2026-11-13`이야.
+
+## 명령
+1. 납기일이 기준일보다 이전이고 `remaining_qty > 0`인 지연 행을 추출해.
+2. **중요 자재(`critical == "Y"`)** 건수와 지연 금액 합계를 계산해.
+
+## 출력 형식
+| 구분 | 건수 | 비고 |
+| --- | --- | --- |
+| 전체 지연 | 94건 | 당일 납기 제외 |
+| 중요 지연 | 47건 | 우선 조치 대상 |
+
+> 주의: 원본 CSV 파일은 절대 수정하지 마.</pre>
+            </div>
+          </div>
+
+          <!-- 예문 2: SKILL.md -->
+          <div class="border border-red-200 rounded-xl p-4 bg-red-50/30 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold bg-red-800 text-white px-2.5 py-0.5 rounded">예문 2 · SKILL.md</span>
+                <button onclick="loadPresetToEditor(2)" class="text-xs text-red-700 hover:underline font-bold">
+                  연습장으로 불러오기 →
+                </button>
+              </div>
+              <p class="text-xs text-slate-600 mb-2.5">
+                <code>---</code> 구분선으로 상단 메타데이터를 묶고, <code>1. 2. 3.</code> 번호 목록으로 실행 및 SHA256 해시 검증 순서를 고정한 스킬 문서입니다.
+              </p>
+              <pre class="bg-slate-900 text-slate-200 text-[11px] p-3.5 rounded-lg overflow-x-auto leading-relaxed font-mono">---
+name: kship-operations-brief
+description: 자재 지연 및 용접검사 일일 브리핑 생성과 검증
+---
+
+# 일일 운영 브리핑 생성과 검증
+
+1. `daily_brief.py`와 입력 CSV 2종을 확인한다.
+2. 실행 전 `SHA256` 해시를 기록한다.
+3. `.venv` 파이썬으로 `--as-of 2026-11-13` 옵션을 실행한다.
+4. `generated/` 폴더의 결과 5종과 **원본 보존 여부**를 검증한다.
+
+---
+> 제약사항: 공급사 요청은 초안만 생성하고 외부 전송 및 Git 푸시는 금지한다.</pre>
+            </div>
+          </div>
+
+          <!-- 예문 3: daily_brief.md -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold bg-emerald-800 text-white px-2.5 py-0.5 rounded">예문 3 · daily_brief.md</span>
+                <button onclick="loadPresetToEditor(3)" class="text-xs text-red-700 hover:underline font-bold">
+                  연습장으로 불러오기 →
+                </button>
+              </div>
+              <p class="text-xs text-slate-600 mb-2.5">
+                <code>daily_brief.py</code>가 자동 생성하는 일일 운영 브리핑 결과물 구조입니다. 대·중·소제목과 표가 계층적으로 배치됩니다.
+              </p>
+              <pre class="bg-slate-900 text-slate-200 text-[11px] p-3.5 rounded-lg overflow-x-auto leading-relaxed font-mono"># 일일 운영 브리핑
+
+- 집계 기준일: `2026-11-13`
+
+## 요약
+
+### 자재 지연 현황
+- 지연 행: **94건** (중요 지연: **47건**)
+- 지연 미입고 금액: **4,010,660,000원**
+
+### 품질 현황 (기준일까지 누적)
+- 누적 검사 건수: 10,793건 / 불합격: 1,157건 (`10.7199%`)
+
+## 지연일 상위 품목
+
+| 발주 ID | 호선 | 공급사 | 자재 | 지연일 |
+| --- | --- | --- | --- | --- |
+| ORD-1042 | KS-101 | 한빛중공업 | 선체 블록 밸브 | 18일 |</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 3: [직접 실습] 실시간 Markdown 연습장 & 미니 퀴즈        -->
+    <!-- ========================================================= -->
+    <div id="tabContent3" class="tab-content hidden space-y-6">
+
+      <!-- 실시간 마크다운 에디터 & 프리뷰 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-laptop-code text-red-700"></i> 실시간 Markdown 연습장 (왼쪽 입력 → 오른쪽 즉시 변환)
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+              상단 툴바 버튼을 클릭하거나 왼쪽 에디터에 직접 기호를 타이핑해 보세요. 오른쪽 화면에 실제 적용 결과가 실시간으로 나타납니다.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+            <button onclick="loadPresetToEditor(0)" class="px-2.5 py-1.5 bg-red-800 hover:bg-red-900 text-white rounded text-xs font-bold transition">
+              종합 연습 예문
+            </button>
+            <button onclick="loadPresetToEditor(1)" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded text-xs font-semibold transition">
+              프롬프트 예문
+            </button>
+            <button onclick="loadPresetToEditor(2)" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded text-xs font-semibold transition">
+              SKILL.md 예문
+            </button>
+            <button onclick="clearEditor()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold border border-slate-300 transition">
+              비우기
+            </button>
+          </div>
+        </div>
+
+        <!-- 빠른 태그 삽입 툴바 -->
+        <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 border border-slate-200 p-2 rounded-t-xl">
+          <span class="text-[11px] font-bold text-slate-500 px-1.5">빠른 삽입:</span>
+          <button onclick="insertSnippet('# 대제목\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono font-bold"># 대제목</button>
+          <button onclick="insertSnippet('## 중제목\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono font-bold">## 중제목</button>
+          <button onclick="insertSnippet('### 소제목\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono font-bold">### 소제목</button>
+          <button onclick="insertSnippet('- 항목 1\n- 항목 2\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">- 목록</button>
+          <button onclick="insertSnippet('1. 첫 번째 단계\n2. 두 번째 단계\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">1. 번호</button>
+          <button onclick="insertSnippet('**강조할 핵심 내용**')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">**강조**</button>
+          <button onclick="insertSnippet('`KS-101`')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">`코드`</button>
+          <button onclick="insertSnippet('> 주의: 원본 데이터는 수정하지 마세요.\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">&gt; 인용문</button>
+          <button onclick="insertSnippet('\n---\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">--- 구분선</button>
+          <button onclick="insertSnippet('\n| 호선 | 자재명 | 지연일 |\n| --- | --- | --- |\n| KS-101 | 주기관 배관 | 12일 |\n')" class="px-2 py-1 bg-white hover:bg-red-50 hover:text-red-700 border border-slate-300 rounded text-xs font-mono">| 표 |</button>
+        </div>
+
+        <!-- 좌우 분할 에디터 & 프리뷰 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 border-x border-b border-slate-200 rounded-b-xl overflow-hidden">
+          <!-- 왼쪽: 입력창 -->
+          <div class="flex flex-col bg-slate-900">
+            <div class="px-3.5 py-2 bg-slate-800 text-slate-300 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+              <span><i class="fa-solid fa-pen text-amber-400 mr-1.5"></i>Markdown 입력창 (.md)</span>
+              <button onclick="copyEditorText()" class="text-xs text-slate-300 hover:text-white flex items-center gap-1">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+            </div>
+            <textarea id="mdInput" rows="18" oninput="renderMarkdown()" class="w-full bg-slate-900 text-emerald-300 text-xs p-4 focus:outline-none leading-relaxed resize-y" placeholder="여기에 Markdown 기호를 직접 입력해 보세요..."></textarea>
+          </div>
+
+          <!-- 오른쪽: 렌더링 결과 -->
+          <div class="flex flex-col bg-white border-t lg:border-t-0 lg:border-l border-slate-200">
+            <div class="px-3.5 py-2 bg-slate-50 text-slate-700 text-xs font-bold flex items-center justify-between border-b border-slate-200">
+              <span><i class="fa-solid fa-eye text-red-700 mr-1.5"></i>적용 결과 미리보기</span>
+              <span class="text-[11px] text-slate-400 font-normal">실시간 자동 변환</span>
+            </div>
+            <div id="mdOutput" class="md-preview p-5 overflow-y-auto max-h-[440px]"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 실습 미션 3가지 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-flag-checkered text-red-700"></i> 직접 해보는 3단계 실습 미션 (위 연습장에서 테스트해 보세요!)
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <span class="inline-block px-2 py-0.5 bg-red-100 text-red-800 font-bold rounded mb-1.5">미션 1 · 제목 & 강조</span>
+            <p class="text-slate-700 leading-relaxed">
+              <code>#</code> 대제목으로 <strong>"KS-102 호선 용접검사 주간 보고"</strong>를 만들고, 본문에 <code>**불합격률 10.72%**</code>와 <code>`weld_inspections.csv`</code>를 넣어 보세요.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <span class="inline-block px-2 py-0.5 bg-amber-100 text-amber-800 font-bold rounded mb-1.5">미션 2 · 순서 목록 & 인용문</span>
+            <p class="text-slate-700 leading-relaxed">
+              <code>1. 2. 3.</code> 번호 목록으로 <strong>데이터 확인 → 분석 실행 → 결과 검증</strong> 3단계를 적고, 맨 아래에 <code>&gt;</code> 인용문으로 <strong>"외부 발송 금지"</strong> 경고문을 달아 보세요.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <span class="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded mb-1.5">미션 3 · 표(Table) 만들기</span>
+            <p class="text-slate-700 leading-relaxed">
+              파이프 기호(<code>|</code>)와 하이픈(<code>---</code>)을 사용해 <strong>공급사 · 품목 · 지연일</strong> 3개 열을 가진 지연 자재 표에 새로운 행 1줄을 직접 추가해 보세요.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- 토스트 알림창 -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 translate-y-20 opacity-0 transition-all duration-300 z-50 border border-slate-700">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toastMsg">클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) 임직원 AI 바이브 코딩 실습 가이드 • Markdown 기초 문법 및 실시간 연습장
+    </div>
+  </footer>
+
+  <script>
+    const PRESETS = {
+      0: `# 일일 운영 브리핑 (연습용)
+
+- 집계 기준일: \`2026-11-13\`
+- 담당 부서: 케이조선 자재·품질관리팀
+
+## 1. 핵심 요약
+
+### 자재 납기 지연 현황
+- 전체 발주 행: 240건
+- 지연 행: **94건** (중요 지연: **47건**)
+- 지연 미입고 금액: **4,010,660,000원**
+
+## 2. 점검 절차 (번호 목록)
+1. \`material_orders.csv\` 및 \`weld_inspections.csv\` 원본 확인
+2. \`daily_brief.py\` 실행 및 KPI 산출
+3. 실행 전후 \`SHA256\` 해시 비교 검증
+
+---
+
+## 3. 중요 지연 자재 표
+
+| 발주 ID | 호선 | 공급사 | 자재명 | 지연일 |
+| --- | --- | --- | --- | --- |
+| ORD-1042 | KS-101 | 한빛중공업 | 선체 블록 밸브 | 18일 |
+| ORD-1089 | KS-102 | 대한조선기자재 | 주기관 냉각 파이프 | 14일 |
+
+> 주의사항: 원본 CSV 파일은 절대 수정하지 않으며, 공급사 연락은 초안만 생성합니다.`,
+
+      1: `# 자재 납기 지연 분석 프롬프트
+
+## 역할
+너는 케이조선 자재·조달 데이터 분석 도우미야.
+
+## 맥락
+\`data/material_orders.csv\` 파일의 기준일은 \`2026-11-13\`이야.
+
+## 명령
+1. 납기일이 기준일보다 이전이고 \`remaining_qty > 0\`인 지연 행을 추출해.
+2. **중요 자재(\`critical == "Y"\`)** 건수와 지연 금액 합계를 계산해.
+
+## 출력 형식
+
+| 구분 | 건수 | 비고 |
+| --- | --- | --- |
+| 전체 지연 | 94건 | 당일 납기 제외 |
+| 중요 지연 | 47건 | 우선 조치 대상 |
+
+> 주의: 원본 CSV 파일은 절대 수정하지 마.`,
+
+      2: `---
+name: kship-operations-brief
+description: 자재 지연 및 용접검사 일일 브리핑 생성과 검증
+---
+
+# 일일 운영 브리핑 생성과 검증
+
+1. \`daily_brief.py\`와 입력 CSV 2종을 확인한다.
+2. 실행 전 \`SHA256\` 해시를 기록한다.
+3. \`.venv\` 파이썬으로 \`--as-of 2026-11-13\` 옵션을 실행한다.
+4. \`generated/\` 폴더의 결과 5종과 **원본 보존 여부**를 검증한다.
+
+---
+
+> 제약사항: 공급사 요청은 초안만 생성하고 외부 전송 및 Git 푸시는 금지한다.`
+    };
+
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 3; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs";
+        }
+      }
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function formatInline(text) {
+      let s = escapeHtml(text);
+      // 인라인 코드 `...`
+      s = s.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+      // 굵게 **...**
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      return s;
+    }
+
+    function renderMarkdown() {
+      const raw = document.getElementById('mdInput').value;
+      const lines = raw.split('\n');
+      let html = '';
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // 빈 줄
+        if (trimmed === '') {
+          i++;
+          continue;
+        }
+
+        // 여러 줄 코드 블록 ```
+        if (trimmed.startsWith('```')) {
+          let codeLines = [];
+          i++;
+          while (i < lines.length && !lines[i].trim().startsWith('```')) {
+            codeLines.push(escapeHtml(lines[i]));
+            i++;
+          }
+          i++; // 닫는 ``` 건너뛰기
+          html += `<pre class="code-block"><code>${codeLines.join('\n')}</code></pre>`;
+          continue;
+        }
+
+        // 구분선 ---
+        if (/^---+$/.test(trimmed)) {
+          html += '<hr>';
+          i++;
+          continue;
+        }
+
+        // 제목 #, ##, ###
+        if (trimmed.startsWith('### ')) {
+          html += `<h3>${formatInline(trimmed.slice(4))}</h3>`;
+          i++;
+          continue;
+        }
+        if (trimmed.startsWith('## ')) {
+          html += `<h2>${formatInline(trimmed.slice(3))}</h2>`;
+          i++;
+          continue;
+        }
+        if (trimmed.startsWith('# ')) {
+          html += `<h1>${formatInline(trimmed.slice(2))}</h1>`;
+          i++;
+          continue;
+        }
+
+        // 인용문 >
+        if (trimmed.startsWith('> ')) {
+          html += `<blockquote>${formatInline(trimmed.slice(2))}</blockquote>`;
+          i++;
+          continue;
+        }
+
+        // 표 | ... |
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+          let tableRows = [];
+          while (i < lines.length && lines[i].trim().startsWith('|') && lines[i].trim().endsWith('|')) {
+            tableRows.push(lines[i].trim());
+            i++;
+          }
+          if (tableRows.length >= 2) {
+            const parseRow = (r) => r.slice(1, -1).split('|').map(c => c.trim());
+            const headers = parseRow(tableRows[0]);
+            const isSeparator = /^[\s|:-]+$/.test(tableRows[1]);
+            const bodyStart = isSeparator ? 2 : 1;
+
+            html += '<table><thead><tr>';
+            headers.forEach(h => {
+              html += `<th>${formatInline(h)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            for (let r = bodyStart; r < tableRows.length; r++) {
+              const cells = parseRow(tableRows[r]);
+              html += '<tr>';
+              cells.forEach(c => {
+                html += `<td>${formatInline(c)}</td>`;
+              });
+              html += '</tr>';
+            }
+            html += '</tbody></table>';
+            continue;
+          }
+        }
+
+        // 글머리 목록 -
+        if (trimmed.startsWith('- ')) {
+          html += '<ul>';
+          while (i < lines.length && lines[i].trim().startsWith('- ')) {
+            html += `<li>${formatInline(lines[i].trim().slice(2))}</li>`;
+            i++;
+          }
+          html += '</ul>';
+          continue;
+        }
+
+        // 번호 목록 1. 2. ...
+        if (/^\d+\.\s/.test(trimmed)) {
+          html += '<ol>';
+          while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
+            const content = lines[i].trim().replace(/^\d+\.\s/, '');
+            html += `<li>${formatInline(content)}</li>`;
+            i++;
+          }
+          html += '</ol>';
+          continue;
+        }
+
+        // 일반 단락
+        html += `<p>${formatInline(trimmed)}</p>`;
+        i++;
+      }
+
+      document.getElementById('mdOutput').innerHTML = html || '<p class="text-slate-400">왼쪽 입력창에 Markdown 문법을 입력하면 이곳에 결과가 나타납니다.</p>';
+    }
+
+    function insertSnippet(snippet) {
+      const textarea = document.getElementById('mdInput');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const current = textarea.value;
+      textarea.value = current.substring(0, start) + snippet + current.substring(end);
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + snippet.length;
+      renderMarkdown();
+    }
+
+    function loadPresetToEditor(presetId) {
+      switchTab(3);
+      document.getElementById('mdInput').value = PRESETS[presetId];
+      renderMarkdown();
+      showToast("예문이 연습장에 불러와졌습니다!");
+    }
+
+    function clearEditor() {
+      document.getElementById('mdInput').value = "";
+      renderMarkdown();
+      showToast("연습장이 초기화되었습니다.");
+    }
+
+    function copyEditorText() {
+      const text = document.getElementById('mdInput').value;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Markdown 코드가 복사되었습니다!");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2200);
+    }
+
+    // 초기 로드 시 종합 연습 예문 표시
+    document.getElementById('mdInput').value = PRESETS[0];
+    renderMarkdown();
+  </script>
+</body>
+</html>
