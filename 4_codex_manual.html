@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 Codex CLI 실무 활용 매뉴얼 & 슬래시 명령어 가이드</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .k-burgundy {
+      color: #9E1B32;
+    }
+    .bg-k-burgundy {
+      background-color: #9E1B32;
+    }
+    .border-k-burgundy {
+      border-color: #9E1B32;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Codex CLI 기본 명령어 & 사용 설명서</h1>
+          <p class="text-xs text-slate-500">터미널 기반 AI 페어 프로그래밍 가이드 및 슬래시(/) 명령어 정리</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-solid fa-robot text-red-600 mr-1"></i>AI 바이브 코딩 실습용
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- Codex CLI 한눈에 보기 카드 -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-start gap-3.5">
+        <div class="p-3 bg-red-50 rounded-xl text-red-700 mt-0.5">
+          <i class="fa-solid fa-terminal text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">OpenAI Codex CLI란?</h2>
+            <span class="text-[11px] bg-slate-100 text-slate-600 font-mono px-2 py-0.5 rounded">v0.1+</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            VS Code 터미널 안에서 AI 모델과 실시간으로 대화하며 코드를 생성, 수정, 점검하고 파일 시스템을 직접 조작할 수 있는 차세대 AI 개발 에이전트 도구입니다.
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto shrink-0">
+        <button onclick="copyToClipboard('codex')" class="px-4 py-2.5 bg-red-800 hover:bg-red-900 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-play"></i> codex 실행 복사
+        </button>
+        <button onclick="copyToClipboard('codex --no-daemon')" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 border border-slate-300">
+          <i class="fa-solid fa-shield text-amber-600"></i> --no-daemon (권한오류 우회)
+        </button>
+      </div>
+    </div>
+
+    <!-- 터미널 인터페이스 프리뷰 (캡처 화면 재현) -->
+    <div class="bg-slate-900 rounded-xl p-5 mb-6 shadow-md border border-slate-800 text-xs font-mono text-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3 text-slate-400">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+          <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+          <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+          <span class="ml-2 font-sans font-semibold text-slate-300">VS Code Terminal • Codex Interactive Prompt</span>
+        </div>
+        <span class="text-[11px] text-slate-500">K-Shipbuilding AI Environment</span>
+      </div>
+
+      <!-- 슬래시 명령어 목록 -->
+      <div class="space-y-1.5 mb-4 pl-1">
+        <div><span class="text-emerald-400 font-bold">/init</span> <span class="text-slate-500">-</span> <span class="text-slate-300">create an AGENTS.md file with instructions for Codex</span></div>
+        <div><span class="text-emerald-400 font-bold">/status</span> <span class="text-slate-500">-</span> <span class="text-slate-300">show current session configuration</span></div>
+        <div><span class="text-emerald-400 font-bold">/permissions</span> <span class="text-slate-500">-</span> <span class="text-slate-300">choose what Codex is allowed to do</span></div>
+        <div><span class="text-emerald-400 font-bold">/model</span> <span class="text-slate-500">-</span> <span class="text-slate-300">choose what model and reasoning effort to use</span></div>
+        <div><span class="text-emerald-400 font-bold">/review</span> <span class="text-slate-500">-</span> <span class="text-slate-300">review any changes and find issues</span></div>
+      </div>
+
+      <!-- 프롬프트 입력창 모사 -->
+      <div class="bg-slate-800/80 rounded-lg p-3 border border-slate-700 mb-3 flex items-center gap-2 text-slate-100">
+        <span class="text-red-400 font-bold text-sm">❯</span>
+        <span class="text-slate-400 font-sans">Ask Codex to do anything... (원하는 작업을 자연어로 입력)</span>
+        <span class="w-2 h-4 bg-red-400 animate-pulse ml-1 inline-block"></span>
+      </div>
+
+      <div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span><i class="fa-solid fa-microchip text-slate-500 mr-1"></i> GPT-5.6-Luna medium</span>
+        <span><i class="fa-solid fa-folder text-slate-500 mr-1"></i> ~\Dev\kship_quiz</span>
+        <span class="text-amber-400 font-sans"><kbd class="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">←</kbd> for agents</span>
+        <span class="text-sky-400 font-sans"><kbd class="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">?</kbd> for shortcuts</span>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        슬래시(/) 5대 명령어 상세
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        단축키 및 조작법
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        실전 프롬프트 패턴
+      </button>
+      <button onclick="switchTab(4)" id="tabNav4" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">4</span>
+        트러블슈팅 (권한 & 오류)
+      </button>
+    </div>
+
+    <!-- TAB 1: 슬래시 명령어 상세 -->
+    <div id="tabContent1" class="tab-content block space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-terminal text-red-700"></i> 프롬프트 입력창 슬래시(/) 명령어 5종 완벽 해설
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          Codex 세션 실행 중 <code class="bg-slate-100 text-red-700 px-1.5 py-0.5 rounded font-mono font-bold">/</code>를 입력하면 프로젝트 설정, 권한 제어, 코드 리뷰를 즉시 제어할 수 있습니다.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- 1. /init -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:border-red-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm font-mono text-red-800 bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                /init
+              </span>
+              <button onclick="copyToClipboard('/init')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">프로젝트 지침 파일 생성 (AGENTS.md)</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              현재 폴더의 특성, 코딩 컨벤션, 규칙을 담은 <code class="bg-white px-1 rounded font-mono border">AGENTS.md</code>를 생성합니다.
+            </p>
+            <div class="bg-white rounded p-2 text-[11px] text-slate-500 border border-slate-200">
+              💡 <strong>활용 팁:</strong> "이 프로젝트는 Streamlit을 사용하며 한국어 주석을 달아야 함" 같은 기본 규칙을 명시해두면 매 대화마다 반복 설명할 필요가 없습니다.
+            </div>
+          </div>
+
+          <!-- 2. /status -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:border-red-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm font-mono text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
+                /status
+              </span>
+              <button onclick="copyToClipboard('/status')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">현재 세션 상태 및 설정 확인</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              현재 선택된 AI 모델, 토큰 소비량, 작업 폴더 경로, 보안 승인 모드 등의 세션 설정을 일목요연하게 표시합니다.
+            </p>
+            <div class="bg-white rounded p-2 text-[11px] text-slate-500 border border-slate-200">
+              💡 <strong>활용 팁:</strong> 대화가 길어져 컨텍스트가 얼마나 찼는지, 올바른 모델이 선택되었는지 점검할 때 유용합니다.
+            </div>
+          </div>
+
+          <!-- 3. /permissions -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:border-red-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm font-mono text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                /permissions
+              </span>
+              <button onclick="copyToClipboard('/permissions')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">도구 실행 권한 정책 설정</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              Codex가 파일을 읽고 쓰거나, 터미널 명령을 실행할 때 <strong>매번 사용자 확인을 받을지(Ask), 전자동으로 실행할지(Auto)</strong>를 선택합니다.
+            </p>
+            <div class="bg-white rounded p-2 text-[11px] text-slate-500 border border-slate-200">
+              💡 <strong>권장 설정:</strong> 초보자 수업 때는 실수 방지를 위해 <strong>Read: Auto, Write: Ask, Exec: Ask</strong> 구성을 권장합니다.
+            </div>
+          </div>
+
+          <!-- 4. /model -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:border-red-300 transition">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm font-mono text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                /model
+              </span>
+              <button onclick="copyToClipboard('/model')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">추론 모델 및 추론 강도(Reasoning Effort) 변경</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              상황에 맞춰 더 똑똑한 고성능 모델이나 가벼운 실시간 응답 모델로 전환하고, 생각하는 깊이(low/medium/high)를 조정합니다.
+            </p>
+            <div class="bg-white rounded p-2 text-[11px] text-slate-500 border border-slate-200">
+              💡 <strong>설정 기준:</strong> 복잡한 조선 데이터 정제·통계 분석은 <strong>high</strong>, 단순 UI 문구 수정은 <strong>low</strong>가 효율적입니다.
+            </div>
+          </div>
+
+          <!-- 5. /review -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:border-red-300 transition md:col-span-2">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-900 text-sm font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                /review
+              </span>
+              <button onclick="copyToClipboard('/review')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>복사</button>
+            </div>
+            <h4 class="font-bold text-slate-900 text-xs mb-1">작업 변경점 종합 리뷰 및 버그 진단</h4>
+            <p class="text-xs text-slate-600 leading-relaxed mb-2">
+              현재 세션에서 수정된 모든 파일의 코드 변경(Diff)을 AI가 자동으로 검토하여 미처 발견하지 못한 잠재적 버그, 보안 취약점, 예외 처리 누락을 찾아냅니다.
+            </p>
+            <div class="bg-white rounded p-2 text-[11px] text-slate-500 border border-slate-200">
+              💡 <strong>필수 절차:</strong> 코드를 실행하거나 Git에 커밋하기 직전 <code class="font-mono text-emerald-700">/review</code>를 한 번 돌려 검증받는 습관을 들이면 오류를 90% 이상 예방할 수 있습니다.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 단축키 및 조작법 -->
+    <div id="tabContent2" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-keyboard text-red-700"></i> 프롬프트 하단 핵심 내비게이션 단축키
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">
+          터미널 인터페이스 하단에 안내되는 직관적인 키보드 컨트롤 방법입니다.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start gap-3">
+            <div class="px-2.5 py-1.5 bg-slate-900 text-amber-300 rounded font-mono font-bold text-sm shadow-inner shrink-0">
+              ← (왼쪽 화살표)
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs mb-1">에이전트 모드 전환 (for agents)</h4>
+              <p class="text-xs text-slate-600">
+                단순 챗봇 모드에서 파일 작성, 명령 실행, 디버깅을 주도적으로 수행하는 특화 서브 에이전트 목록을 열고 선택합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start gap-3">
+            <div class="px-2.5 py-1.5 bg-slate-900 text-sky-300 rounded font-mono font-bold text-sm shadow-inner shrink-0">
+              ? (물음표 키)
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs mb-1">단축키 도움말 (for shortcuts)</h4>
+              <p class="text-xs text-slate-600">
+                대화 취소(<kbd class="bg-white px-1 border rounded">Ctrl+C</kbd>), 멀티라인 입력, 세션 종료 등 지원되는 모든 핫키 목록을 화면에 즉시 띄웁니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start gap-3">
+            <div class="px-2.5 py-1.5 bg-slate-900 text-rose-300 rounded font-mono font-bold text-sm shadow-inner shrink-0">
+              Ctrl + C
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs mb-1">현재 실행 중단 / 답변 취소</h4>
+              <p class="text-xs text-slate-600">
+                AI가 답변을 생성 중이거나 긴 명령어를 실행하고 있을 때 안전하게 즉시 중단합니다. (두 번 누르면 Codex 종료)
+              </p>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex items-start gap-3">
+            <div class="px-2.5 py-1.5 bg-slate-900 text-emerald-300 rounded font-mono font-bold text-sm shadow-inner shrink-0">
+              Shift + Enter
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-xs mb-1">줄바꿈 (Multi-line 입력)</h4>
+              <p class="text-xs text-slate-600">
+                단순 엔터는 명령어 전송이며, 여러 줄의 요구사항이나 코드 스니펫을 함께 붙여넣을 때 줄바꿈으로 활용합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 실전 프롬프트 패턴 -->
+    <div id="tabContent3" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-comments text-red-700"></i> 조선/제조 실무 실습을 위한 실전 프롬프트 예시
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">
+          복잡한 문법 대신 자연어로 명확하게 요구사항을 전달하는 표준 패턴입니다.
+        </p>
+
+        <div class="space-y-3 font-sans">
+          <!-- 예시 1 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold text-red-900 bg-red-100 px-2 py-0.5 rounded">데이터 분석 & Streamlit 시각화</span>
+              <button onclick="copyToClipboard('선박 자재 데이터인 material_spec.csv 파일을 분석해서, 규격별 단가와 납기일을 인터랙티브하게 필터링할 수 있는 Streamlit 웹 앱 코드를 app.py로 작성해줘.')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>프롬프트 복사</button>
+            </div>
+            <p class="text-xs text-slate-700 font-mono bg-white p-2.5 rounded border border-slate-200">
+              "선박 자재 데이터인 material_spec.csv 파일을 분석해서, 규격별 단가와 납기일을 인터랙티브하게 필터링할 수 있는 Streamlit 웹 앱 코드를 app.py로 작성해줘."
+            </p>
+          </div>
+
+          <!-- 예시 2 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded">에러 디버깅 & 자동 수정</span>
+              <button onclick="copyToClipboard('터미널에서 실행했을 때 KeyError: 'plate_thickness' 오류가 발생했어. 데이터 컬럼명을 확인해서 안전하게 예외 처리되도록 코드를 고쳐줘.')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>프롬프트 복사</button>
+            </div>
+            <p class="text-xs text-slate-700 font-mono bg-white p-2.5 rounded border border-slate-200">
+              "터미널에서 실행했을 때 KeyError: 'plate_thickness' 오류가 발생했어. 데이터 컬럼명을 확인해서 안전하게 예외 처리되도록 코드를 고쳐줘."
+            </p>
+          </div>
+
+          <!-- 예시 3 -->
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded">품질 검사 자동화 스크립트</span>
+              <button onclick="copyToClipboard('용접 부위 비파괴 검사(NDT) 로그를 읽어서 허용 오차를 초과한 행들만 빨간색으로 하이라이트된 엑셀 보고서로 저장하는 파이썬 함수 만들어줘.')" class="text-xs text-slate-400 hover:text-slate-800"><i class="fa-regular fa-copy mr-1"></i>프롬프트 복사</button>
+            </div>
+            <p class="text-xs text-slate-700 font-mono bg-white p-2.5 rounded border border-slate-200">
+              "용접 부위 비파괴 검사(NDT) 로그를 읽어서 허용 오차를 초과한 행들만 빨간색으로 하이라이트된 엑셀 보고서로 저장하는 파이썬 함수 만들어줘."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 트러블슈팅 (권한 & 오류) -->
+    <div id="tabContent4" class="tab-content hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> 자주 발생하는 오류 해결 (Troubleshooting)
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-5">
+          실습 중 마주칠 수 있는 대표적인 터미널 오류와 원클릭 대처 방법입니다.
+        </p>
+
+        <div class="space-y-4">
+          <!-- 이슈 1: 데몬 권한 충돌 -->
+          <div class="border border-rose-200 bg-rose-50/40 rounded-xl p-4">
+            <div class="flex items-start justify-between gap-2 mb-1">
+              <div class="font-bold text-slate-900 text-xs flex items-center gap-2 text-rose-800">
+                <i class="fa-solid fa-circle-exclamation"></i> Error: failed to open daemon process: Access is denied. (os error 5)
+              </div>
+              <span class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold">빈출</span>
+            </div>
+            <p class="text-xs text-slate-600 mb-2.5">
+              이전에 관리자 권한으로 백그라운드 프로세스가 실행되었거나 파일이 잠겼을 때 발생합니다.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <button onclick="copyToClipboard('Get-Process *codex* | Stop-Process -Force')" class="px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white rounded text-xs font-mono transition flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-regular fa-copy"></i> 프로세스 강제 종료 명령어 복사
+              </button>
+              <button onclick="copyToClipboard('codex --no-daemon')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded text-xs font-mono transition flex items-center justify-center gap-1">
+                <i class="fa-regular fa-copy"></i> 단독 모드 실행 (codex --no-daemon)
+              </button>
+            </div>
+          </div>
+
+          <!-- 이슈 2: PowerShell .ps1 차단 에러 -->
+          <div class="border border-amber-200 bg-amber-50/40 rounded-xl p-4">
+            <div class="font-bold text-slate-900 text-xs flex items-center gap-2 text-amber-800 mb-1">
+              <i class="fa-solid fa-shield"></i> codex.ps1 파일을 로드할 수 없습니다 (PSSecurityException)
+            </div>
+            <p class="text-xs text-slate-600 mb-2.5">
+              Windows 기본 보안 정책상 스크립트 실행이 제한되어 발생합니다.
+            </p>
+            <button onclick="copyToClipboard('Set-ExecutionPolicy RemoteSigned -Scope CurrentUser')" class="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white rounded text-xs font-mono transition flex items-center gap-1 shadow-sm">
+              <i class="fa-regular fa-copy"></i> 권한 해제 명령어 복사 (Set-ExecutionPolicy RemoteSigned -Scope CurrentUser)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 토스트 알림창 -->
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2 translate-y-20 opacity-0 transition-all duration-300 z-50 border border-slate-700">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toastMsg">클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) AI 기반 업무혁신 실습 가이드 • OpenAI Codex CLI 매뉴얼
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 4; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+        }
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("명령어가 클립보드에 복사되었습니다!");
+      }).catch(err => {
+        alert("복사 실패: " + err);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2300);
+    }
+  </script>
+</body>
+</html>

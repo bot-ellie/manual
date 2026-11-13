@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>케이조선 AI 바이브 코딩 전체 과정 — 도구 · 핵심 개념 · 용어 총정리</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tab-active {
+      border-bottom: 3px solid #9E1B32;
+      color: #9E1B32;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col">
+
+  <!-- 헤더 -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-700 text-white font-extrabold px-3 py-1.5 rounded-lg flex items-center gap-2 tracking-wider text-sm shadow-sm">
+          <i class="fa-solid fa-ship"></i> K-SHIPBUILDING
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">전체 과정 사용 도구 · 핵심 개념 · 용어 총정리</h1>
+          <p class="text-xs text-slate-500">오늘 사용해 볼 도구와 필수 개념 정리</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-700 rounded-full border border-red-200">
+          <i class="fa-solid fa-layer-group mr-1"></i>1~5차시 통합 로드맵
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- 상단 전체 커리큘럼 매트릭스 요약표 -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-map text-red-700"></i> 차시별 신규 등장 도구 & 핵심 개념 한눈에 보기
+        </h2>
+        <span class="text-xs text-slate-500">* 이전 차시에서 이미 다룬 도구(예: Python, GitHub, Streamlit 등)는 최초 등장 차시에서 상세 설명합니다.</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-800 border-y border-slate-200">
+              <th class="py-2.5 px-3 font-bold w-16 text-center">차시</th>
+              <th class="py-2.5 px-3 font-bold">해당 차시 사용 도구</th>
+              <th class="py-2.5 px-3 font-bold text-red-800">최초 설명되는 핵심 도구 (중복 제외)</th>
+              <th class="py-2.5 px-3 font-bold">핵심 개념과 용어</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr onclick="switchTab(1)" class="hover:bg-red-50/40 cursor-pointer transition">
+              <td class="py-2.5 px-3 text-center font-extrabold text-red-800">1차시</td>
+              <td class="py-2.5 px-3 font-medium">PowerShell · Codex CLI · 브라우저</td>
+              <td class="py-2.5 px-3 font-bold text-slate-900">PowerShell · Codex CLI · 브라우저</td>
+              <td class="py-2.5 px-3 text-slate-600">터미널 · CLI · 프롬프트 · 파일 · 권한</td>
+            </tr>
+            <tr onclick="switchTab(2)" class="hover:bg-red-50/40 cursor-pointer transition">
+              <td class="py-2.5 px-3 text-center font-extrabold text-red-800">2차시</td>
+              <td class="py-2.5 px-3 font-medium">VS Code · Codex CLI · Python · Git · GitHub</td>
+              <td class="py-2.5 px-3 font-bold text-slate-900">VS Code · Python · Git · GitHub</td>
+              <td class="py-2.5 px-3 text-slate-600">CSV · 집계 · 기준일 · Git · commit · push</td>
+            </tr>
+            <tr onclick="switchTab(3)" class="hover:bg-red-50/40 cursor-pointer transition">
+              <td class="py-2.5 px-3 text-center font-extrabold text-red-800">3차시</td>
+              <td class="py-2.5 px-3 font-medium">Streamlit · Python · GitHub · Community Cloud</td>
+              <td class="py-2.5 px-3 font-bold text-slate-900">Streamlit · Community Cloud</td>
+              <td class="py-2.5 px-3 text-slate-600">웹앱 · 로컬 서버 · 포트 · 의존성 · 배포</td>
+            </tr>
+            <tr onclick="switchTab(4)" class="hover:bg-red-50/40 cursor-pointer transition">
+              <td class="py-2.5 px-3 text-center font-extrabold text-red-800">4차시</td>
+              <td class="py-2.5 px-3 font-medium">ChatGPT Windows 앱의 Codex · Python · Streamlit</td>
+              <td class="py-2.5 px-3 font-bold text-slate-900">ChatGPT Windows 앱의 Codex</td>
+              <td class="py-2.5 px-3 text-slate-600">로컬 폴더 · 에이전트 · 가중 비율 · 검증</td>
+            </tr>
+            <tr onclick="switchTab(5)" class="hover:bg-red-50/40 cursor-pointer transition">
+              <td class="py-2.5 px-3 text-center font-extrabold text-red-800">5차시</td>
+              <td class="py-2.5 px-3 font-medium">ChatGPT 앱의 Codex · Python · Markdown · HTML</td>
+              <td class="py-2.5 px-3 font-bold text-slate-900">Markdown · HTML</td>
+              <td class="py-2.5 px-3 text-slate-600">자동화 · dry-run · 재실행 · 원본 보존</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 차시별 탭 네비게이션 -->
+    <div class="flex border-b border-slate-200 mb-6 overflow-x-auto bg-white rounded-t-xl px-2">
+      <button onclick="switchTab(1)" id="tabNav1" class="tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs">1</span>
+        1차시 · 터미널 & Codex CLI 입문
+      </button>
+      <button onclick="switchTab(2)" id="tabNav2" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
+        2차시 · VS Code · Python · Git/GitHub
+      </button>
+      <button onclick="switchTab(3)" id="tabNav3" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">3</span>
+        3차시 · Streamlit & 클라우드 배포
+      </button>
+      <button onclick="switchTab(4)" id="tabNav4" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">4</span>
+        4차시 · 데스크톱 앱 에이전트 & 품질 검증
+      </button>
+      <button onclick="switchTab(5)" id="tabNav5" class="tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">5</span>
+        5차시 · 문서 생성(MD·HTML) & 안전 자동화
+      </button>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: 1차시 (PowerShell · Codex CLI · 브라우저)           -->
+    <!-- ========================================================= -->
+    <div id="tabContent1" class="tab-content block space-y-6">
+      <!-- 사용 도구 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-toolbox text-red-700"></i> 1차시 사용 도구
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">키보드로 AI에게 작업을 지시하고 결과물을 즉시 눈으로 확인하는 기본 도구 3가지입니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-sky-700"></i> PowerShell
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              Windows에 기본 내장된 강력한 <strong>명령어 실행 창(쉘)</strong>입니다. 폴더 이동, 파일 목록 확인, 프로그램 설치와 실행을 키보드 타이핑으로 수행합니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>비유:</strong> 마우스 대신 글자로 컴퓨터에 지시를 내리는 <strong>조종석 대화창</strong>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-robot text-red-700"></i> Codex CLI
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              터미널(PowerShell) 안에서 실행하는 <strong>OpenAI의 AI 코딩 에이전트</strong>입니다. 자연어로 지시하면 현재 폴더의 파일을 읽고 코드와 문서를 직접 생성·수정합니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>비유:</strong> 내 작업 폴더 안에 들어와 직접 파일을 만들어주는 <strong>터미널 상주 AI 개발자</strong>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-globe text-emerald-700"></i> 브라우저 (Browser)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              Chrome, Edge 등 웹 페이지를 화면에 그려주는 프로그램입니다. AI가 만든 <code class="bg-white px-1 border rounded">quiz.html</code> 같은 결과물을 열어 동작을 확인하는 창구입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>역할:</strong> 코드로 작성된 결과물을 사람이 클릭하고 볼 수 있게 보여주는 <strong>화면 뷰어</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념과 용어 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 1차시 핵심 개념과 용어
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">터미널 (Terminal)</span>
+            <p class="text-slate-600 leading-relaxed">마우스 클릭 대신 키보드로 글자 명령을 입력해 컴퓨터를 조작하는 검은색/파란색 텍스트 화면 창입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">CLI (Command Line Interface)</span>
+            <p class="text-slate-600 leading-relaxed">아이콘을 클릭하는 GUI와 반대되는 개념으로, <strong>글자(명령줄)를 입력해 프로그램과 대화하는 작업 방식</strong>을 뜻합니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">프롬프트 (Prompt)</span>
+            <p class="text-slate-600 leading-relaxed">AI에게 원하는 작업의 <strong>[역할·맥락·명령·형식·제한]</strong>을 담아 전달하는 지시문입니다. 구체적일수록 정확한 결과물이 나옵니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">파일 (File)</span>
+            <p class="text-slate-600 leading-relaxed">데이터(<code class="font-mono">.csv</code>), 문서(<code class="font-mono">.md</code>), 프로그램 코드(<code class="font-mono">.py</code>, <code class="font-mono">.html</code>)가 컴퓨터 저장장치에 기록되는 기본 단위입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 sm:col-span-2">
+            <span class="font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded inline-block mb-1.5">권한 (Permissions & Execution Policy)</span>
+            <p class="text-slate-600 leading-relaxed">컴퓨터 보안과 안전을 위해 <strong>특정 스크립트 실행이나 파일 수정·삭제를 허용할지 통제하는 규칙</strong>입니다. PowerShell의 실행 정책(<code class="font-mono">RemoteSigned</code>)과 Codex의 도구 승인(<code class="font-mono">/permissions</code>)이 여기에 해당합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: 2차시 (VS Code · Python · Git · GitHub)            -->
+    <!-- ========================================================= -->
+    <div id="tabContent2" class="tab-content hidden space-y-6">
+      <!-- 사용 도구 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox text-red-700"></i> 2차시 신규 사용 도구
+          </h3>
+          <span class="text-xs text-slate-400">중복 제외 (Codex CLI는 1차시 참고)</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">데이터를 코드로 계산하고, 작업 이력을 체계적으로 저장·공유하는 핵심 개발 도구 4가지입니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-code text-sky-600"></i> VS Code (Visual Studio Code)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              파일 탐색기, 코드 편집기, 터미널, Git 버전 관리 기능이 하나로 통합된 <strong>개발자 전용 만능 작업대</strong>입니다. 대표적인 IDE(Integrated Development Environment, 통합 개발 환경) 중 하나입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>비유:</strong> 필기구·서류철·계산기가 한 책상에 빌트인된 <strong>스마트 워크스테이션</strong>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-brands fa-python text-amber-500"></i> Python (파이썬)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              사람이 읽기 쉬운 문법을 가진 프로그래밍 언어로, <strong>대용량 표 데이터 분석(<code class="font-mono">pandas</code>), 자동화 스크립트, 웹 대시보드</strong> 제작에 표준으로 쓰입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>역할:</strong> 2~5차시 전체에서 실제 데이터 계산과 보고서 생성을 수행하는 <strong>핵심 계산 엔진</strong>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-brands fa-git-alt text-orange-600"></i> Git (깃)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              내 PC(로컬)에서 코드나 파일이 언제, 어떻게 바뀌었는지 <strong>버전별로 이력을 기록하고 과거 시점으로 되돌릴 수 있는 버전 관리 도구</strong>입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>비유:</strong> 작업 단계마다 스냅샷을 찍어두는 <strong>로컬 타임머신</strong>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-brands fa-github text-slate-900"></i> GitHub (깃허브)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              Git으로 기록한 내 컴퓨터의 작업 내역을 <strong>인터넷 클라우드에 백업하고 팀원들과 공유·협업하는 원격 저장소 서비스</strong>입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>역할:</strong> 3차시 웹앱 배포(Community Cloud)와 5차시 예약 자동화의 중심 허브
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념과 용어 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 2차시 핵심 개념과 용어
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">CSV (Comma-Separated Values)</span>
+            <p class="text-slate-600 leading-relaxed">표 형태의 데이터를 <strong>쉼표(,)로 구분해 저장한 가벼운 텍스트 파일</strong>입니다. 엑셀에서도 열 수 있고 파이썬이 가장 빠르고 정확하게 읽는 표준 형식입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">집계 (Aggregation)</span>
+            <p class="text-slate-600 leading-relaxed">수백~수만 행의 개별 거래·검사 기록을 조건별로 묶어 <strong>건수, 합계, 지연 금액, 불합격률 등 요약 지표로 산출</strong>하는 과정입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">기준일 (As-of Date)</span>
+            <p class="text-slate-600 leading-relaxed">납기 지연이나 누적 실적을 판단하는 <strong>기준 시점 날짜</strong>(예: <code class="font-mono">2026-11-13</code>)입니다. 기준일이 달라지면 지연 건수와 누적 합계도 달라집니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-orange-900 bg-orange-100 px-2 py-0.5 rounded inline-block mb-1.5">Git (로컬 저장소)</span>
+            <p class="text-slate-600 leading-relaxed">내 PC 폴더 안에 숨겨진 <code class="font-mono">.git</code> 공간에서 수정 전후 차이(<code class="font-mono">diff</code>)를 추적하고 버전 이력을 관리하는 시스템입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-orange-900 bg-orange-100 px-2 py-0.5 rounded inline-block mb-1.5">commit (커밋)</span>
+            <p class="text-slate-600 leading-relaxed">작업한 파일 중 기록할 대상(<code class="font-mono">git add</code>)을 골라 <strong>설명 메시지와 함께 하나의 확정된 버전(세이브 포인트)으로 저장</strong>하는 동작입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-orange-900 bg-orange-100 px-2 py-0.5 rounded inline-block mb-1.5">push (푸시)</span>
+            <p class="text-slate-600 leading-relaxed">내 PC에 저장된 <code class="font-mono">commit</code> 기록들을 <strong>원격 저장소(GitHub)로 업로드해 동기화</strong>하는 명령입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 3: 3차시 (Streamlit · Community Cloud)                -->
+    <!-- ========================================================= -->
+    <div id="tabContent3" class="tab-content hidden space-y-6">
+      <!-- 사용 도구 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox text-red-700"></i> 3차시 신규 사용 도구
+          </h3>
+          <span class="text-xs text-slate-400">중복 제외 (Python, GitHub는 2차시 참고)</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">파이썬 분석 코드를 누구나 클릭해 볼 수 있는 웹 대시보드로 만들고 인터넷에 공개하는 도구 2가지입니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-rose-600"></i> Streamlit (스트림릿)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              HTML이나 JavaScript를 따로 배우지 않고도 <strong>순수 Python 코드만으로 필터, 차트, KPI(핵심성과지표) 카드, 다운로드 버튼이 달린 인터랙티브 웹앱</strong>을 만들어 주는 프레임워크입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>용도:</strong> 3차시 '자재 납기 관제실'과 4차시 '용접 품질 대시보드' 화면 제작
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up text-sky-600"></i> Streamlit Community Cloud
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              GitHub 저장소에 올린 Streamlit 코드를 연결하면 <strong>별도 서버 구축 없이 무료로 웹 URL을 발급해 실행해 주는 클라우드 호스팅 서비스</strong>입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>장점:</strong> 내 PC를 꺼도 동료들이 웹 링크만으로 대시보드에 접속할 수 있습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념과 용어 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 3차시 핵심 개념과 용어
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded inline-block mb-1.5">웹앱 (Web App)</span>
+            <p class="text-slate-600 leading-relaxed">설치 없이 웹 브라우저에서 실행되며, 사용자가 드롭다운·체크박스를 누를 때마다 실시간으로 계산해 화면을 바꿔주는 동적 프로그램입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded inline-block mb-1.5">로컬 서버 (Local Server)</span>
+            <p class="text-slate-600 leading-relaxed">외부 인터넷에 공개하기 전, <strong>내 컴퓨터 내부(<code class="font-mono">localhost</code>)에서 테스트용으로 띄우는 미니 웹 서버</strong>입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded inline-block mb-1.5">포트 (Port)</span>
+            <p class="text-slate-600 leading-relaxed">한 컴퓨터 안에서 여러 프로그램이 통신할 때 겹치지 않도록 나누어 쓰는 <strong>출입구 번호</strong>입니다. Streamlit은 기본적으로 <code class="font-mono">8501</code>번 포트를 사용합니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded inline-block mb-1.5">의존성 (Dependencies)</span>
+            <p class="text-slate-600 leading-relaxed">내 코드가 정상 작동하기 위해 <strong>미리 설치되어 있어야 하는 외부 패키지 목록(<code class="font-mono">pandas</code>, <code class="font-mono">streamlit</code>)</strong>입니다. 보통 <code class="font-mono">requirements.txt</code> 파일에 버전과 함께 적어둡니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 sm:col-span-2">
+            <span class="font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded inline-block mb-1.5">배포 (Deploy)</span>
+            <p class="text-slate-600 leading-relaxed">내 PC에서만 돌아가던 개발 결과물을 <strong>클라우드 서버에 올려 다른 사람들도 인터넷 주소(URL)로 접속해 사용할 수 있게 공개</strong>하는 최종 단계입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 4: 4차시 (ChatGPT Windows 앱의 Codex)                 -->
+    <!-- ========================================================= -->
+    <div id="tabContent4" class="tab-content hidden space-y-6">
+      <!-- 사용 도구 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox text-red-700"></i> 4차시 신규 사용 도구
+          </h3>
+          <span class="text-xs text-slate-400">중복 제외 (Python, Streamlit은 2·3차시 참고)</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">터미널 명령어 대신 그래픽 창(GUI)에서 프로젝트 폴더를 선택해 AI 에이전트와 협업하는 도구입니다.</p>
+
+        <div class="border border-slate-200 rounded-xl p-5 bg-slate-50">
+          <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+            <i class="fa-solid fa-window-maximize text-red-700"></i> ChatGPT Windows 앱의 Codex
+          </div>
+          <p class="text-xs text-slate-700 leading-relaxed mb-3">
+            Windows용 ChatGPT 데스크톱 앱에 통합된 <strong>로컬 코딩 에이전트 기능</strong>입니다. 앱에서 내 PC의 특정 실습 폴더(<code class="font-mono">starter</code> 등)를 프로젝트로 연결하면, 채팅창을 통해 파일 분석, 코드 작성, 실행 검증을 직관적인 UI로 수행할 수 있습니다.
+          </p>
+          <div class="bg-white p-2.5 rounded border border-slate-200 text-xs text-slate-600">
+            💡 <strong>Codex CLI와의 차이:</strong> 터미널에서 텍스트로 실행하는 것이 <strong>Codex CLI</strong>라면, 데스크톱 앱 화면에서 폴더 선택과 스킬 메뉴를 클릭하며 쓰는 것이 <strong>ChatGPT 앱의 Codex</strong>입니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념과 용어 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 4차시 핵심 개념과 용어
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">로컬 폴더 (Local Folder)</span>
+            <p class="text-slate-600 leading-relaxed">클라우드가 아닌 <strong>내 컴퓨터 하드디스크에 실제로 존재하는 작업 디렉터리</strong>입니다. 에이전트가 접근할 수 있는 작업 범위를 해당 폴더로 제한해 안전하게 실습합니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded inline-block mb-1.5">에이전트 (Agent)</span>
+            <p class="text-slate-600 leading-relaxed">단순히 질문에 답만 하는 챗봇을 넘어, 목표를 달성하기 위해 <strong>스스로 계획을 세우고 파일을 읽으며 코드를 실행·검증하는 자율 작업 주체</strong>입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-red-900 bg-red-100 px-2 py-0.5 rounded inline-block mb-1.5">가중 비율 (Weighted Rate)</span>
+            <p class="text-slate-600 leading-relaxed">용접 불합격률을 구할 때 각 행의 비율을 단순 평균 내지 않고, <strong>전체 불합격 수 합계 ÷ 전체 검사 수 합계 × 100</strong>으로 계산하여 검사 물량 규모가 반영된 정확한 비율입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded inline-block mb-1.5">검증 (Verification)</span>
+            <p class="text-slate-600 leading-relaxed">AI가 만든 대시보드 화면 수치(예: <code class="font-mono">KS-101</code> 호선 필터 결과)가 <strong>원본 CSV에서 직접 재계산한 값과 100% 일치하는지 교차 대조</strong>해 신뢰성을 확보하는 과정입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- TAB 5: 5차시 (Markdown · HTML & 자동화 개념)              -->
+    <!-- ========================================================= -->
+    <div id="tabContent5" class="tab-content hidden space-y-6">
+      <!-- 사용 도구 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-toolbox text-red-700"></i> 5차시 신규 사용 도구 (문서 포맷)
+          </h3>
+          <span class="text-xs text-slate-400">중복 제외 (Codex 앱, Python은 2·4차시 참고)</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-600 mb-4">자동 분석 결과를 사람이 읽기 좋은 문서와 웹 보고서 형태로 출력하기 위한 표준 문서 포맷 2가지입니다.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-brands fa-markdown text-slate-800"></i> Markdown (마크다운, <code class="text-xs">.md</code>)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              <code class="bg-white px-1 border rounded">#</code>(제목), <code class="bg-white px-1 border rounded">-</code>(목록), <code class="bg-white px-1 border rounded">**</code>(강조) 같은 간단한 기호로 서식을 표현하는 <strong>경량 텍스트 문서 형식</strong>입니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>활용:</strong> <code class="font-mono">AGENTS.md</code>, <code class="font-mono">SKILL.md</code>, 일일 운영 브리핑 요약 보고서(<code class="font-mono">brief_YYYY-MM-DD.md</code>) 작성
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+              <i class="fa-brands fa-html5 text-orange-600"></i> HTML (<code class="text-xs">.html</code>)
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed mb-2">
+              웹 브라우저가 화면을 그릴 때 사용하는 <strong>표준 웹 문서 언어</strong>입니다. 제목(<code class="font-mono">&lt;h1&gt;</code>), 표(<code class="font-mono">&lt;table&gt;</code>), 스타일을 구조화해 깔끔한 보고서 화면을 만듭니다.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 text-[11px] text-slate-600">
+              💡 <strong>활용:</strong> 1차시 퀴즈 웹페이지와 5차시 일일 운영 브리핑 HTML 보고서 생성
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 개념과 용어 -->
+      <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-red-700"></i> 5차시 핵심 개념과 용어
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-indigo-900 bg-indigo-100 px-2 py-0.5 rounded inline-block mb-1.5">자동화 (Automation)</span>
+            <p class="text-slate-600 leading-relaxed">사람이 매일 수작업으로 엑셀을 열고 복붙하던 반복 업무(데이터 집계, 보고서 생성, 요청 초안 작성)를 <strong>스크립트와 에이전트 스킬로 표준화해 한 번에 실행</strong>하는 것입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded inline-block mb-1.5">dry-run (모의 실행 / 초안 생성)</span>
+            <p class="text-slate-600 leading-relaxed">실제 이메일 발송, 외부 전송, 운영 DB 반영 같은 <strong>되돌릴 수 없는 작업을 즉시 실행하지 않고, 결과물 초안(<code class="font-mono">supplier_drafts.md</code>)만 먼저 만들어 사람이 검토</strong>하게 하는 안전 절차입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded inline-block mb-1.5">재실행 (Idempotent Re-run / 멱등성)</span>
+            <p class="text-slate-600 leading-relaxed">같은 기준일로 프로그램을 두 번 이상 다시 실행해도 <strong>결과 파일이 중복으로 쌓이지 않고 동일한 집계 수치가 일관되게 유지</strong>되는 안정적 실행 성질입니다.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <span class="font-bold text-rose-900 bg-rose-100 px-2 py-0.5 rounded inline-block mb-1.5">원본 보존 (Source Preservation)</span>
+            <p class="text-slate-600 leading-relaxed">분석이나 보고서 생성 과정에서 <strong>기초 데이터인 원본 CSV 파일을 절대 덮어쓰거나 삭제하지 않고 읽기 전용으로 유지</strong>하는 데이터 분석의 대원칙입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500">
+      케이조선(K-SHIPBUILDING) AI 기반 업무혁신 실습 가이드 • 사용 도구 & 핵심 개념 총정리
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(stepIndex) {
+      for (let i = 1; i <= 5; i++) {
+        const content = document.getElementById('tabContent' + i);
+        const nav = document.getElementById('tabNav' + i);
+        if (i === stepIndex) {
+          content.classList.remove('hidden');
+          content.classList.add('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm whitespace-nowrap transition-all tab-active flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-red-800 text-white flex items-center justify-center text-xs";
+        } else {
+          content.classList.add('hidden');
+          content.classList.remove('block');
+          nav.className = "tab-button px-4 py-3.5 text-xs sm:text-sm text-slate-500 whitespace-nowrap transition-all flex items-center gap-2";
+          nav.querySelector('span').className = "w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
